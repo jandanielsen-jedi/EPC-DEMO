@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Package Engineer — Demo Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+    --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+    --b2:rgba(44,44,42,.25);--b3:rgba(44,44,42,.12);
+    --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+    --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
+    --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+    --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
+    --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:14px;color:var(--t1);
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+      --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+      --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+      --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+      --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+      --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+      --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+      --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+    }
+  }
+  html,body{min-height:100%;background:var(--bg3)}
+  .topbar{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:0 32px;height:52px;display:flex;align-items:center;gap:12px}
+  .logo{font-size:16px;font-weight:600;color:var(--t1);letter-spacing:-.02em}
+  .logo span{color:var(--blue)}
+  .logo-sub{font-size:12px;color:var(--t3)}
+  .spacer{flex:1}
+  .topbar-tag{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--blue-bg);color:var(--blue-t);font-weight:500}
+
+  .hero{padding:48px 32px 32px;max-width:900px;margin:0 auto}
+  .hero h1{font-size:28px;font-weight:500;color:var(--t1);margin-bottom:8px;line-height:1.3}
+  .hero p{font-size:14px;color:var(--t2);line-height:1.7;max-width:580px}
+
+  .section{padding:0 32px 32px;max-width:900px;margin:0 auto}
+  .section-label{font-size:11px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .card{background:var(--bg1);border:0.5px solid var(--b3);border-radius:12px;padding:20px;text-decoration:none;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .15s,transform .1s}
+  .card:hover{border-color:var(--b2);transform:translateY(-1px)}
+  .card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;margin-bottom:4px}
+  .card-title{font-size:14px;font-weight:500;color:var(--t1)}
+  .card-desc{font-size:12px;color:var(--t2);line-height:1.6;flex:1}
+  .card-footer{display:flex;align-items:center;gap:6px;padding-top:8px;border-top:0.5px solid var(--b3)}
+  .card-tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
+  .card-link{font-size:11px;color:var(--blue);margin-left:auto}
+  .badge-new{background:var(--green-bg);color:var(--green-t)}
+  .badge-wip{background:var(--amber-bg);color:var(--amber-t)}
+
+  .divider{height:0.5px;background:var(--b3);margin:0 32px 28px;max-width:836px;margin-left:auto;margin-right:auto}
+
+  .workflow{background:var(--bg1);border:0.5px solid var(--b3);border-radius:12px;padding:20px;margin-bottom:12px}
+  .workflow-title{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:8px}
+  .step-row{display:flex;gap:0;align-items:stretch;overflow:hidden;border-radius:6px;border:0.5px solid var(--b3)}
+  .step{flex:1;padding:8px 10px;border-right:0.5px solid var(--b3);background:var(--bg2)}
+  .step:last-child{border-right:none}
+  .step-n{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-bottom:3px}
+  .step-t{font-size:11px;font-weight:500;color:var(--t1)}
+  .step-s{font-size:10px;color:var(--t3);margin-top:2px}
+
+  .version{padding:20px 32px;max-width:900px;margin:0 auto;font-size:11px;color:var(--t3);border-top:0.5px solid var(--b3)}
+  .version a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="logo">Package<span>Engineer</span></div>
+  </div>
+  <div class="logo-sub">UI demo suite</div>
+  <div class="spacer"></div>
+  <span class="topbar-tag">NCS-1A · Compression train 2</span>
+</div>
+
+<div class="hero">
+  <h1>Package Engineer — demo surfaces</h1>
+  <p>UI prototypes for the package engineer workstation. Built for iterating on layout, logic and agent interactions. Run locally — open any demo directly in your browser. Each file is self-contained, no server needed.</p>
+</div>
+
+<div class="section">
+  <div class="section-label">Work surfaces</div>
+  <div class="cards">
+
+    <a class="card" href="desktop-workstation.html">
+      <div class="card-icon" style="background:var(--blue-bg);color:var(--blue)">D</div>
+      <div class="card-title">Desktop workstation</div>
+      <div class="card-desc">Full 3-column layout: command centre + action queue left, P&ID / 3D / graph centre with package completeness strip, run controls + proposals right.</div>
+      <div class="card-footer">
+        <span class="card-tag badge-new">Ready</span>
+        <span class="card-link">Open →</span>
+      </div>
+    </a>
+
+    <a class="card" href="knowledge-graph.html">
+      <div class="card-icon" style="background:var(--purple-bg);color:var(--purple)">G</div>
+      <div class="card-title">Knowledge graph</div>
+      <div class="card-desc">Interactive process system knowledge graph. IMF type hierarchy, equipment nodes, documents, deviations and work orders as graph edges. Click any node for detail.</div>
+      <div class="card-footer">
+        <span class="card-tag badge-new">Ready</span>
+        <span class="card-link">Open →</span>
+      </div>
+    </a>
+
+    <a class="card" href="mobile-surface.html">
+      <div class="card-icon" style="background:var(--green-bg);color:var(--green)">M</div>
+      <div class="card-title">Mobile surface</div>
+      <div class="card-desc">Push notification + OK/Deny/Defer interrupt surface. Lock screen notification, action queue and proposal detail tap-through. Agent-first, human gatekeeping.</div>
+      <div class="card-footer">
+        <span class="card-tag badge-new">Ready</span>
+        <span class="card-link">Open →</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">How to iterate</div>
+  <div class="workflow">
+    <div class="workflow-title">Workflow: Claude → file → browser</div>
+    <div class="step-row">
+      <div class="step"><div class="step-n">Step 1</div><div class="step-t">Describe a change</div><div class="step-s">In Claude: "update the left panel to…"</div></div>
+      <div class="step"><div class="step-n">Step 2</div><div class="step-t">Claude updates artifact</div><div class="step-s">File diff shown in chat</div></div>
+      <div class="step"><div class="step-n">Step 3</div><div class="step-t">Copy &amp; save file</div><div class="step-s">Paste into your local .html file</div></div>
+      <div class="step"><div class="step-n">Step 4</div><div class="step-t">Refresh browser</div><div class="step-s">F5 — change is live</div></div>
+    </div>
+  </div>
+
+  <div class="workflow">
+    <div class="workflow-title">Folder structure — save all files in the same folder</div>
+    <div style="background:var(--bg2);border-radius:6px;padding:12px 14px;font-family:monospace;font-size:12px;color:var(--t2);line-height:2">
+      package-engineer-demo/<br>
+      &nbsp;&nbsp;├── <strong style="color:var(--t1)">index.html</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← this file<br>
+      &nbsp;&nbsp;├── <strong style="color:var(--blue)">desktop-workstation.html</strong><br>
+      &nbsp;&nbsp;├── <strong style="color:var(--purple)">knowledge-graph.html</strong><br>
+      &nbsp;&nbsp;└── <strong style="color:var(--green)">mobile-surface.html</strong>
+    </div>
+  </div>
+</div>
+
+<div class="version">
+  v0.3 · Updated 25 Mar 2026 · Built with Claude Sonnet 4.6 ·
+  <a href="https://readi-jip.org/asset-information-modelling-framework/" target="_blank">READI PCA / IMF types →</a>
+</div>
+
+</body>
+</html>
