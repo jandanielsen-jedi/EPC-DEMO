@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Package Engineer — Desktop Workstation</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+    --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+    --b1:rgba(44,44,42,.4);--b2:rgba(44,44,42,.3);--b3:rgba(44,44,42,.15);
+    --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+    --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
+    --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+    --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
+    --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
+    --teal:#0F6E56;--teal-bg:#E1F5EE;--teal-t:#04342C;
+    --radius:8px;--radius-lg:12px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:12px;color:var(--t1);
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+      --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+      --b1:rgba(220,218,210,.4);--b2:rgba(220,218,210,.25);--b3:rgba(220,218,210,.12);
+      --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+      --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+      --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+      --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+      --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+      --teal:#1D9E75;--teal-bg:#04342C;--teal-t:#9FE1CB;
+    }
+  }
+  html,body{height:100%;overflow:hidden}
+  body{display:flex;flex-direction:column;background:var(--bg3)}
+
+  /* Top nav */
+  .topnav{height:38px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;gap:8px;padding:0 12px;flex-shrink:0}
+  .nav-logo{font-size:13px;font-weight:600;color:var(--t1);letter-spacing:-.02em}
+  .nav-logo span{color:var(--blue)}
+  .nav-sep{width:0.5px;height:16px;background:var(--b3);margin:0 4px}
+  .nav-crumb{font-size:11px;color:var(--t3)}
+  .nav-crumb b{color:var(--t2);font-weight:500}
+  .nav-pill{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500}
+  .nav-pill.crit{background:var(--red-bg);color:var(--red-t)}
+  .nav-pill.warn{background:var(--amber-bg);color:var(--amber-t)}
+  .nav-pill.ok{background:var(--green-bg);color:var(--green-t)}
+  .spacer{flex:1}
+  .nav-btn{font-size:11px;padding:3px 10px;border:0.5px solid var(--b2);border-radius:var(--radius);background:none;color:var(--t2);cursor:pointer}
+  .nav-btn:hover{background:var(--bg2)}
+  .nav-avatar{width:26px;height:26px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--blue)}
+
+  /* Shell */
+  .shell{flex:1;display:grid;grid-template-columns:252px 1fr 232px;overflow:hidden;min-height:0}
+  .col{display:flex;flex-direction:column;overflow:hidden;min-width:0}
+  .col.left{background:var(--bg1);border-right:0.5px solid var(--b3)}
+  .col.right{background:var(--bg1);border-left:0.5px solid var(--b3)}
+  .col.center{background:var(--bg2)}
+
+  /* Shared */
+  .ph{padding:8px 10px;border-bottom:0.5px solid var(--b3);background:var(--bg1);display:flex;align-items:center;gap:6px;flex-shrink:0}
+  .ph .title{font-size:12px;font-weight:500;color:var(--t1);flex:1}
+  .sb{overflow-y:auto;flex:1;padding:8px}
+  .sb::-webkit-scrollbar{width:3px}
+  .sb::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+  .lbl{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.04em}
+  .badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
+  .bc{background:var(--red-bg);color:var(--red-t)}
+  .bw{background:var(--amber-bg);color:var(--amber-t)}
+  .bg{background:var(--green-bg);color:var(--green-t)}
+  .bi{background:var(--blue-bg);color:var(--blue-t)}
+  .tabs{display:flex;gap:2px;padding:5px 8px;background:var(--bg2);border-bottom:0.5px solid var(--b3);flex-shrink:0}
+  .tab{font-size:11px;padding:3px 9px;border-radius:var(--radius);cursor:pointer;color:var(--t2);border:none;background:none}
+  .tab.on{background:var(--bg1);color:var(--t1);border:0.5px solid var(--b2);font-weight:500}
+  .tab.blue.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+  /* KPI strip */
+  .kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:7px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0}
+  .kpi{background:var(--bg2);border-radius:6px;padding:5px 7px;text-align:center}
+  .kv{font-size:15px;font-weight:500}
+  .kv.red{color:var(--red)}.kv.amber{color:var(--amber)}.kv.green{color:var(--green)}
+  .kl{font-size:9px;color:var(--t3);margin-top:1px}
+
+  /* Action cards */
+  .ac{border:0.5px solid var(--b3);border-radius:var(--radius);padding:7px 9px;margin-bottom:5px;background:var(--bg1);cursor:pointer;transition:border-color .15s}
+  .ac:hover{border-color:var(--b2)}
+  .ac.crit{border-left:2px solid #C04828}
+  .ac.warn{border-left:2px solid var(--amber)}
+  .ac.info{border-left:2px solid var(--blue)}
+  .ac-top{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+  .ac-body{font-size:11px;color:var(--t2);line-height:1.4;margin-bottom:5px}
+  .ac-meta{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+  .chip{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--bg2);color:var(--t3)}
+  .ac-btns{display:flex;gap:4px}
+  .btn{font-size:10px;padding:3px 8px;border-radius:var(--radius);border:0.5px solid var(--b2);background:none;color:var(--t2);cursor:pointer}
+  .btn:hover{background:var(--bg2)}
+  .btn.p{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .btn.g{background:var(--green-bg);color:var(--green-t);border-color:var(--green)}
+  .btn.r{background:var(--red-bg);color:var(--red-t);border-color:var(--red)}
+
+  /* Center */
+  .center-hd{padding:7px 10px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;gap:7px;flex-shrink:0}
+  .eq-tag{font-size:11px;font-weight:500;color:var(--blue);background:var(--blue-bg);padding:2px 7px;border-radius:4px}
+  .breadcrumb{font-size:11px;color:var(--t3)}
+  .breadcrumb b{color:var(--t2);font-weight:400}
+  .view-btns{display:flex;gap:2px;margin-left:auto}
+  .vb{font-size:11px;padding:3px 10px;border:0.5px solid var(--b2);border-radius:4px;cursor:pointer;color:var(--t2);background:var(--bg2)}
+  .vb:hover{background:var(--bg1)}
+  .vb.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+  /* Package strip */
+  .pkg-area{padding:8px 10px;background:var(--bg2);border-bottom:0.5px solid var(--b3);display:flex;gap:8px;align-items:stretch;flex-shrink:0}
+  .ring-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
+  .ring-wrap svg{width:52px;height:52px}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-pct{font-size:13px;font-weight:500;color:var(--t1)}
+  .ring-sub{font-size:8px;color:var(--t3)}
+  .doc-cell{background:var(--bg1);border-radius:6px;padding:5px 6px;border:0.5px solid var(--b3);display:flex;flex-direction:column;gap:3px;cursor:pointer;min-width:0;transition:border-color .15s}
+  .doc-cell:hover{border-color:var(--b1)}
+  .doc-cell.ok{border-color:#C0DD97;background:var(--green-bg)}
+  .doc-cell.miss{border-color:#FAC775;background:var(--amber-bg)}
+  .doc-cell.err{border-color:#F7C1C1;background:var(--red-bg)}
+  .doc-cell.pend{border-color:#B5D4F4;background:var(--blue-bg)}
+  .doc-icon{font-size:9px;font-weight:700;padding:1px 4px;border-radius:2px;display:inline-block;width:fit-content}
+  .doc-icon.ok{background:#C0DD97;color:var(--green-t)}
+  .doc-icon.miss{background:#FAC775;color:var(--amber-t)}
+  .doc-icon.err{background:#F7C1C1;color:var(--red-t)}
+  .doc-icon.pend{background:#B5D4F4;color:var(--blue-t)}
+
+  /* View canvas — P&ID SVG fills remaining center space */
+  .view-canvas{flex:1;position:relative;overflow:hidden;background:var(--bg2);min-height:0}
+  .view-canvas svg{width:100%;height:100%}
+
+  /* Table */
+  .table-area{border-top:0.5px solid var(--b3);display:flex;flex-direction:column;flex:0 0 auto;background:var(--bg1)}
+  .table-controls{display:flex;align-items:center;gap:6px;padding:5px 8px;border-bottom:0.5px solid var(--b3);background:var(--bg2)}
+  .search-box{flex:1;font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t1);max-width:180px}
+  .search-box:focus{outline:none;border-color:var(--blue)}
+  .tbl-wrap{overflow-y:auto;max-height:152px}
+  .tbl-wrap::-webkit-scrollbar{width:3px}
+  .tbl-wrap::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{font-size:10px;font-weight:500;color:var(--t3);padding:4px 8px;border-bottom:0.5px solid var(--b3);text-align:left;white-space:nowrap;background:var(--bg2);position:sticky;top:0;z-index:1}
+  td{padding:4px 8px;border-bottom:0.5px solid var(--b3);color:var(--t2);white-space:nowrap}
+  tr.sel td{background:var(--blue-bg)}
+  tr:hover td{background:var(--bg2);cursor:pointer}
+  .td-tag{color:var(--blue);font-weight:500}
+  .cbar{height:5px;background:var(--bg2);border-radius:3px;width:56px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:4px}
+  .cbf{height:100%;border-radius:3px}
+  .sdot{width:6px;height:6px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px}
+  .sd-r{background:var(--red)}.sd-a{background:var(--amber)}.sd-g{background:var(--green)}.sd-b{background:var(--blue)}
+
+  /* Right */
+  .right-tabs{display:flex;border-bottom:0.5px solid var(--b3);flex-shrink:0}
+  .rt{flex:1;font-size:10px;padding:6px 3px;text-align:center;border:none;background:none;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent}
+  .rt.on{color:var(--t1);border-bottom-color:var(--blue);font-weight:500}
+  .ag-row{display:flex;align-items:center;gap:5px;padding:3px 0}
+  .ag-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .ag-dot.run{background:var(--green);box-shadow:0 0 0 2px var(--green-bg)}
+  .ag-dot.idle{background:var(--t3)}
+  .ag-dot.wait{background:var(--amber);box-shadow:0 0 0 2px var(--amber-bg)}
+  .prop{border:0.5px solid var(--b3);border-radius:var(--radius);padding:8px 9px;margin-bottom:6px;background:var(--bg2)}
+  .prop-hd{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+  .prop-conf.h{color:var(--green)}.prop-conf.m{color:var(--amber)}.prop-conf.l{color:var(--red)}
+  .prop-body{font-size:11px;color:var(--t2);line-height:1.45;margin-bottom:6px}
+  .prop-btns{display:flex;gap:4px}
+  .sp-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:0.5px solid var(--b3)}
+  .sp-gauge{height:4px;background:var(--bg2);border-radius:2px;flex:1;overflow:hidden}
+  .sp-fill{height:100%;border-radius:2px}
+  .cg-bar{flex:1;height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+  .cg-fill{height:100%;border-radius:3px}
+  .tr-row{display:flex;align-items:center;gap:5px;padding:4px 0;border-bottom:0.5px solid var(--b3)}
+  .tr-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- Top nav -->
+<div class="topnav">
+  <span class="nav-logo">Package<span>Engineer</span></span>
+  <div class="nav-sep"></div>
+  <span class="nav-crumb">NCS-1A / <b>Compression train 2</b></span>
+  <div class="nav-sep"></div>
+  <span class="nav-pill crit">3 critical</span>
+  <span class="nav-pill warn">2 warning</span>
+  <span class="nav-pill ok">3 compliant</span>
+  <div class="spacer"></div>
+  <button class="nav-btn" onclick="location.href='index.html'">← All demos</button>
+  <button class="nav-btn" onclick="location.href='knowledge-graph.html'">Knowledge graph →</button>
+  <div class="nav-avatar">PE</div>
+</div>
+
+<!-- Shell -->
+<div class="shell">
+
+<!-- ═══════ LEFT ═══════ -->
+<div class="col left">
+  <div class="ph">
+    <span class="title">Command centre</span>
+    <span class="badge bc">3 critical</span>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kv red">62%</div><div class="kl">Doc compliance</div></div>
+    <div class="kpi"><div class="kv amber">14d</div><div class="kl">Avg delay</div></div>
+    <div class="kpi"><div class="kv green">91%</div><div class="kl">Tag coverage</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on">Needs action (7)</button>
+    <button class="tab">KPIs</button>
+  </div>
+  <div class="sb">
+
+    <div class="ac crit">
+      <div class="ac-top"><span class="badge bc">Critical</span><span style="font-size:11px;font-weight:500;flex:1">Datasheet mismatch — MAWP</span></div>
+      <div class="ac-body">PSV-2301: Vendor MAWP 152 bar vs spec 165 bar. IMF attr <i>pressure_design_max</i> out of tolerance.</div>
+      <div class="ac-meta"><span class="chip">PSV-2301</span><span class="chip">IMF: Valve-Safety</span><span class="chip">PO 3842</span></div>
+      <div class="ac-btns">
+        <button class="btn p">Resolve ↗</button>
+        <button class="btn">Show on map</button>
+        <button class="btn">Defer</button>
+      </div>
+    </div>
+
+    <div class="ac crit">
+      <div class="ac-top"><span class="badge bc">Critical</span><span style="font-size:11px;font-weight:500;flex:1">Missing cert — ATEX/CE</span></div>
+      <div class="ac-body">PMP-1140: CE Declaration of Conformity not received. Day 4 overdue.</div>
+      <div class="ac-meta"><span class="chip">PMP-1140</span><span class="chip">IMF: Pump-Centrifugal</span></div>
+      <div class="ac-btns">
+        <button class="btn p">Resolve ↗</button>
+        <button class="btn">Show on map</button>
+      </div>
+    </div>
+
+    <div class="ac crit">
+      <div class="ac-top"><span class="badge bc">Critical</span><span style="font-size:11px;font-weight:500;flex:1">Pressure imbalance risk</span></div>
+      <div class="ac-body">Nyhamma → Sleipner: throughput spike approaching operating envelope. Could violate set points in 6 hrs.</div>
+      <div class="ac-meta"><span class="chip">Compression train 2</span><span class="chip">DLGA</span></div>
+      <div class="ac-btns">
+        <button class="btn p">Resolve ↗</button>
+        <button class="btn">Show on map</button>
+      </div>
+    </div>
+
+    <div class="ac warn">
+      <div class="ac-top"><span class="badge bw">Warning</span><span style="font-size:11px;font-weight:500;flex:1">IMF class mismatch — HX-0420</span></div>
+      <div class="ac-body">Vendor registered Shell-Tube. Spec requires Plate-Frame. 2 IMF attrs unresolvable.</div>
+      <div class="ac-meta"><span class="chip">HX-0420</span><span class="chip">2 attr gaps</span></div>
+      <div class="ac-btns">
+        <button class="btn p">Review ↗</button>
+        <button class="btn">Accept deviation</button>
+      </div>
+    </div>
+
+    <div class="ac warn">
+      <div class="ac-top"><span class="badge bw">Warning</span><span style="font-size:11px;font-weight:500;flex:1">Energy draw exceeding target</span></div>
+      <div class="ac-body">Kärste compression train: energy KPI above target. Efficiency set points elevated.</div>
+      <div class="ac-meta"><span class="chip">Kärste CT</span><span class="chip">Efficiency KPI</span></div>
+      <div class="ac-btns"><button class="btn p">Resolve ↗</button><button class="btn">Monitor</button></div>
+    </div>
+
+    <div class="ac info">
+      <div class="ac-top"><span class="badge bi">Review</span><span style="font-size:11px;font-weight:500;flex:1">Vendor revision — VLV-0887</span></div>
+      <div class="ac-body">Revised datasheet v2.1 — 3 changed attributes vs accepted v2.0.</div>
+      <div class="ac-meta"><span class="chip">VLV-0887</span><span class="chip">3 changed attrs</span></div>
+      <div class="ac-btns"><button class="btn p">View diff ↗</button><button class="btn">Accept all</button></div>
+    </div>
+
+    <div class="ac info">
+      <div class="ac-top"><span class="badge bi">Info</span><span style="font-size:11px;font-weight:500;flex:1">Emissions threshold approach</span></div>
+      <div class="ac-body">St. Fergus export: emissions approaching regulatory ceiling in next run window.</div>
+      <div class="ac-meta"><span class="chip">St. Fergus</span><span class="chip">Safety KPI</span></div>
+      <div class="ac-btns"><button class="btn p">Resolve ↗</button><button class="btn">Monitor</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════ CENTER ═══════ -->
+<div class="col center">
+  <div class="center-hd">
+    <span class="breadcrumb">NCS-1A / <b>Compression train 2</b></span>
+    <span class="eq-tag">PSV-2301</span>
+    <span class="badge bc" style="font-size:9px">62% compliant</span>
+    <div class="view-btns">
+      <button class="vb">Agent WF</button>
+      <button class="vb on" id="vb-pid" onclick="switchView('pid')">P&ID</button>
+      <button class="vb" id="vb-3d" onclick="switchView('3d')">3D</button>
+      <button class="vb" id="vb-graph" onclick="switchView('graph')">Graph</button>
+    </div>
+  </div>
+
+  <!-- Package completeness strip -->
+  <div class="pkg-area">
+    <div style="display:flex;flex-direction:column;gap:3px;width:128px;flex-shrink:0;justify-content:center">
+      <div style="font-size:12px;font-weight:500;color:var(--t1)">PSV-2301 package</div>
+      <div style="font-size:10px;color:var(--t3)">IMF: Valve-Safety · PO 3842</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 52 52" fill="none">
+            <circle cx="26" cy="26" r="21" stroke="var(--b3)" stroke-width="5"/>
+            <circle cx="26" cy="26" r="21" stroke="var(--amber)" stroke-width="5"
+              stroke-dasharray="131.9" stroke-dashoffset="50.1" stroke-linecap="round" transform="rotate(-90 26 26)"/>
+          </svg>
+          <div class="ring-center"><span class="ring-pct">62%</span><span class="ring-sub">done</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;align-items:center;gap:4px"><span class="sdot sd-g"></span><span style="font-size:10px;color:var(--t3)">8 ok</span></div>
+          <div style="display:flex;align-items:center;gap:4px"><span class="sdot sd-r"></span><span style="font-size:10px;color:var(--t3)">2 fail</span></div>
+          <div style="display:flex;align-items:center;gap:4px"><span class="sdot sd-a"></span><span style="font-size:10px;color:var(--t3)">3 miss</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;min-width:0">
+      <div class="doc-cell ok"><span class="doc-icon ok">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">Datasheet v1.2</div><div style="font-size:9px;color:var(--t3)">8/13 attrs</div></div>
+      <div class="doc-cell err"><span class="doc-icon err">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">MAWP mismatch</div><div style="font-size:9px;color:var(--t3)">152 vs 165 bar</div></div>
+      <div class="doc-cell ok"><span class="doc-icon ok">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">IOM Rev 3</div><div style="font-size:9px;color:var(--t3)">11/12 matched</div></div>
+      <div class="doc-cell miss"><span class="doc-icon miss">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">ATEX cert</div><div style="font-size:9px;color:var(--t3)">Not received</div></div>
+      <div class="doc-cell ok"><span class="doc-icon ok">DWG</span><div style="font-size:10px;font-weight:500;color:var(--t1)">GA drawing</div><div style="font-size:9px;color:var(--t3)">Approved</div></div>
+      <div class="doc-cell miss"><span class="doc-icon miss">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">Test report</div><div style="font-size:9px;color:var(--t3)">Pending vendor</div></div>
+      <div class="doc-cell pend"><span class="doc-icon pend">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">Material cert</div><div style="font-size:9px;color:var(--t3)">Under review</div></div>
+      <div class="doc-cell miss"><span class="doc-icon miss">PDF</span><div style="font-size:10px;font-weight:500;color:var(--t1)">Cv flow data</div><div style="font-size:9px;color:var(--t3)">Attr missing</div></div>
+    </div>
+  </div>
+
+  <!-- View canvas -->
+  <div class="view-canvas" id="view-canvas">
+    <!-- P&ID default view -->
+    <svg id="view-pid" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text x="28" y="117" font-size="8" fill="var(--t3)" font-family="sans-serif">Feed gas →</text>
+      <line x1="30" y1="100" x2="530" y2="100" stroke="var(--b2)" stroke-width="3" stroke-linecap="round"/>
+      <!-- V-1101 -->
+      <rect x="38" y="72" width="58" height="56" rx="4" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <text x="67" y="95" text-anchor="middle" font-size="9" font-weight="500" fill="var(--t2)" font-family="sans-serif">V-1101</text>
+      <text x="67" y="108" text-anchor="middle" font-size="8" fill="var(--t3)" font-family="sans-serif">Scrubber</text>
+      <!-- C-2201 -->
+      <circle cx="165" cy="100" r="26" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <text x="165" y="96" text-anchor="middle" font-size="9" font-weight="500" fill="var(--t2)" font-family="sans-serif">C-2201</text>
+      <text x="165" y="109" text-anchor="middle" font-size="8" fill="var(--t3)" font-family="sans-serif">Comp</text>
+      <!-- E-3301 -->
+      <rect x="218" y="80" width="52" height="40" rx="3" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <polyline points="226,100 232,90 238,100 244,90 250,100 256,90 262,100" fill="none" stroke="var(--b2)" stroke-width="1"/>
+      <text x="244" y="113" text-anchor="middle" font-size="8" fill="var(--t3)" font-family="sans-serif">E-3301</text>
+      <!-- PSV-2301 HIGHLIGHTED -->
+      <line x1="318" y1="100" x2="318" y2="56" stroke="var(--b2)" stroke-width="2"/>
+      <rect x="300" y="34" width="36" height="22" rx="3" fill="#FCEBEB" stroke="#C04828" stroke-width="1.5"/>
+      <polygon points="318,27 307,34 329,34" fill="#FCEBEB" stroke="#C04828" stroke-width="1.5"/>
+      <text x="318" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#A32D2D" font-family="sans-serif">PSV</text>
+      <rect x="295" y="11" width="54" height="14" rx="3" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="0.5"/>
+      <circle cx="301" cy="18" r="3" fill="#E24B4A"/>
+      <text x="321" y="21" text-anchor="middle" font-size="9" font-weight="500" fill="#A32D2D" font-family="sans-serif">PSV-2301</text>
+      <!-- Callout -->
+      <rect x="344" y="8" width="110" height="28" rx="4" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="0.5"/>
+      <text x="351" y="19" font-size="8.5" font-weight="500" fill="#A32D2D" font-family="sans-serif">MAWP: 152 bar</text>
+      <text x="351" y="30" font-size="8" fill="#A32D2D" font-family="sans-serif">Spec: 165 bar ← deviation</text>
+      <!-- P-4401 -->
+      <circle cx="394" cy="100" r="20" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <polygon points="382,110 382,90 402,100" fill="none" stroke="var(--b2)" stroke-width="1"/>
+      <text x="394" y="130" text-anchor="middle" font-size="8" fill="var(--t3)" font-family="sans-serif">P-4401</text>
+      <!-- FCV-5501 -->
+      <polygon points="424,88 424,112 444,100" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <polygon points="464,88 464,112 444,100" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <circle cx="444" cy="80" r="7" fill="var(--bg1)" stroke="var(--b2)" stroke-width="1"/>
+      <text x="444" y="130" text-anchor="middle" font-size="8" fill="var(--t3)" font-family="sans-serif">FCV-5501</text>
+      <line x1="464" y1="100" x2="510" y2="100" stroke="var(--b2)" stroke-width="3" marker-end="url(#arr)"/>
+      <text x="518" y="103" font-size="9" fill="var(--t3)" font-family="sans-serif">Out</text>
+      <!-- IMF badges -->
+      <rect x="44" y="65" width="18" height="9" rx="2" fill="#EAF3DE"/>
+      <text x="53" y="72" text-anchor="middle" font-size="7" fill="#27500A" font-family="sans-serif">OK</text>
+      <rect x="150" y="72" width="28" height="9" rx="2" fill="#FAEEDA"/>
+      <text x="164" y="79" text-anchor="middle" font-size="7" fill="#633806" font-family="sans-serif">2 miss</text>
+    </svg>
+    <!-- Placeholder views -->
+    <div id="view-3d" style="display:none;width:100%;height:100%;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+      <div style="font-size:13px;font-weight:500;color:var(--t2)">3D model view</div>
+      <div style="font-size:11px;color:var(--t3)">Connect to Cognite 3D API — CAD model renders here</div>
+      <div style="border:0.5px solid var(--b2);border-radius:var(--radius);padding:8px 14px;font-size:11px;color:var(--blue);background:var(--blue-bg);cursor:pointer">Load 3D model →</div>
+    </div>
+    <div id="view-graph" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+      <div style="font-size:13px;font-weight:500;color:var(--t2)">Knowledge graph</div>
+      <div style="font-size:11px;color:var(--t3)">IMF type hierarchy · equipment · documents · deviations</div>
+      <a href="knowledge-graph.html" style="border:0.5px solid var(--b2);border-radius:var(--radius);padding:8px 14px;font-size:11px;color:var(--blue);background:var(--blue-bg);text-decoration:none">Open full knowledge graph →</a>
+    </div>
+  </div>
+
+  <!-- Equipment table -->
+  <div class="table-area">
+    <div class="table-controls">
+      <span class="lbl">Equipment / package table</span>
+      <input class="search-box" placeholder="Search tag, PO, class…" type="text">
+      <button class="btn">Group ▾</button>
+      <button class="btn">Filter ▾</button>
+      <button class="btn">Columns ▾</button>
+      <button class="btn" style="margin-left:auto">↓ Export</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th><th>Tag</th><th>Description</th><th>IMF class</th><th>PO</th>
+            <th>Pkg complete</th><th>Compliance</th><th>Open actions</th><th>WO / ETA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sel">
+            <td><span class="sdot sd-r"></span>Critical</td>
+            <td class="td-tag">PSV-2301</td><td>Pressure safety valve</td><td>Valve-Safety</td><td>3842</td>
+            <td><div class="cbar"><div class="cbf" style="width:62%;background:var(--amber)"></div></div>62%</td>
+            <td><span class="badge bw">62%</span></td><td>2 critical</td><td>14.01.26</td>
+          </tr>
+          <tr>
+            <td><span class="sdot sd-r"></span>Critical</td>
+            <td class="td-tag">PMP-1140</td><td>Centrifugal pump</td><td>Pump-Centrifugal</td><td>3780</td>
+            <td><div class="cbar"><div class="cbf" style="width:48%;background:var(--red)"></div></div>48%</td>
+            <td><span class="badge bc">48%</span></td><td>1 critical</td><td>17.01.26</td>
+          </tr>
+          <tr>
+            <td><span class="sdot sd-a"></span>Warning</td>
+            <td class="td-tag">HX-0420</td><td>Heat exchanger</td><td>HeatExch-PlateFrame</td><td>3801</td>
+            <td><div class="cbar"><div class="cbf" style="width:75%;background:var(--amber)"></div></div>75%</td>
+            <td><span class="badge bw">75%</span></td><td>1 warning</td><td>15.01.26</td>
+          </tr>
+          <tr>
+            <td><span class="sdot sd-a"></span>Warning</td>
+            <td class="td-tag">VLV-0887</td><td>Gate valve</td><td>Valve-Gate</td><td>3855</td>
+            <td><div class="cbar"><div class="cbf" style="width:88%;background:var(--green)"></div></div>88%</td>
+            <td><span class="badge bw">88%</span></td><td>1 review</td><td>16.01.26</td>
+          </tr>
+          <tr>
+            <td><span class="sdot sd-g"></span>OK</td>
+            <td class="td-tag">C-2201</td><td>Compressor</td><td>Compressor-Recip</td><td>3710</td>
+            <td><div class="cbar"><div class="cbf" style="width:97%;background:var(--green)"></div></div>97%</td>
+            <td><span class="badge bg">97%</span></td><td>—</td><td>10.01.26</td>
+          </tr>
+          <tr>
+            <td><span class="sdot sd-g"></span>OK</td>
+            <td class="td-tag">E-3301</td><td>Gas cooler</td><td>HeatExch-Shell</td><td>3722</td>
+            <td><div class="cbar"><div class="cbf" style="width:100%;background:var(--green)"></div></div>100%</td>
+            <td><span class="badge bg">100%</span></td><td>—</td><td>08.01.26</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /center -->
+
+<!-- ═══════ RIGHT ═══════ -->
+<div class="col right">
+  <div class="ph">
+    <span class="title">Run controls</span>
+    <div class="view-btns">
+      <button class="vb on" style="font-size:10px;padding:2px 7px">Set points</button>
+      <button class="vb" style="font-size:10px;padding:2px 7px">Run set</button>
+      <button class="vb" style="font-size:10px;padding:2px 7px">History</button>
+    </div>
+  </div>
+  <div style="padding:6px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0">
+    <div class="lbl" style="margin-bottom:5px">PSV-2301 · set points</div>
+    <div class="sp-row"><span style="font-size:11px;color:var(--t2);flex:1">Set pressure</span><div class="sp-gauge"><div class="sp-fill" style="width:75%;background:var(--green)"></div></div><span style="font-size:11px;font-weight:500;color:var(--green);min-width:36px;text-align:right">150 bar</span></div>
+    <div class="sp-row"><span style="font-size:11px;color:var(--t2);flex:1">MAWP</span><div class="sp-gauge"><div class="sp-fill" style="width:62%;background:var(--red)"></div></div><span style="font-size:11px;font-weight:500;color:var(--red);min-width:36px;text-align:right">152 ↓</span></div>
+    <div class="sp-row"><span style="font-size:11px;color:var(--t2);flex:1">Temp range</span><div class="sp-gauge"><div class="sp-fill" style="width:90%;background:var(--green)"></div></div><span style="font-size:11px;font-weight:500;color:var(--green);min-width:36px;text-align:right">200°C</span></div>
+    <div class="sp-row"><span style="font-size:11px;color:var(--t2);flex:1">Back pressure</span><div class="sp-gauge"><div class="sp-fill" style="width:55%;background:var(--amber)"></div></div><span style="font-size:11px;font-weight:500;color:var(--amber);min-width:36px;text-align:right">82 bar</span></div>
+  </div>
+  <div style="padding:6px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0">
+    <div class="lbl" style="margin-bottom:5px">Package compliance</div>
+    <div style="margin-bottom:4px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:10px;color:var(--t3)">PSV-2301</span><span style="font-size:10px;color:var(--red)">critical</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="cg-bar"><div class="cg-fill" style="width:62%;background:var(--amber)"></div></div><span style="font-size:11px;font-weight:500;color:var(--amber);min-width:28px;text-align:right">62%</span></div>
+    </div>
+    <div style="margin-bottom:4px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:10px;color:var(--t3)">PMP-1140</span><span style="font-size:10px;color:var(--red)">critical</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="cg-bar"><div class="cg-fill" style="width:48%;background:var(--red)"></div></div><span style="font-size:11px;font-weight:500;color:var(--red);min-width:28px;text-align:right">48%</span></div>
+    </div>
+    <div style="margin-bottom:4px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:10px;color:var(--t3)">HX-0420</span><span style="font-size:10px;color:var(--amber)">warning</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="cg-bar"><div class="cg-fill" style="width:75%;background:var(--amber)"></div></div><span style="font-size:11px;font-weight:500;color:var(--amber);min-width:28px;text-align:right">75%</span></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:10px;color:var(--t3)">C-2201</span><span style="font-size:10px;color:var(--green)">ok</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div class="cg-bar"><div class="cg-fill" style="width:97%;background:var(--green)"></div></div><span style="font-size:11px;font-weight:500;color:var(--green);min-width:28px;text-align:right">97%</span></div>
+    </div>
+  </div>
+  <div class="right-tabs">
+    <button class="rt on">Proposals</button>
+    <button class="rt">Tracker</button>
+    <button class="rt">Agents</button>
+    <button class="rt">Chat</button>
+  </div>
+  <div style="padding:6px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0">
+    <div class="lbl" style="margin-bottom:4px">Agent workforce</div>
+    <div class="ag-row"><span class="ag-dot run"></span><span style="font-size:11px;color:var(--t2);flex:1">Tag compliance agent</span><span style="font-size:9px;color:var(--t3)">Running</span></div>
+    <div class="ag-row"><span class="ag-dot run"></span><span style="font-size:11px;color:var(--t2);flex:1">Doc ingestion agent</span><span style="font-size:9px;color:var(--t3)">Monitoring</span></div>
+    <div class="ag-row"><span class="ag-dot wait"></span><span style="font-size:11px;color:var(--t2);flex:1">Deviation agent</span><span style="font-size:9px;color:var(--t3)">Waiting</span></div>
+    <div class="ag-row"><span class="ag-dot run"></span><span style="font-size:11px;color:var(--t2);flex:1">KPI scoring agent</span><span style="font-size:9px;color:var(--t3)">Running</span></div>
+  </div>
+  <div class="sb">
+    <div class="lbl" style="margin-bottom:5px">For PSV-2301 · MAWP deviation</div>
+    <div class="prop">
+      <div class="prop-hd">
+        <span style="font-size:10px;font-weight:500;color:var(--t3)">Option A</span>
+        <span style="font-size:11px;font-weight:500;flex:1">Issue NCR to vendor</span>
+        <span class="prop-conf h" style="font-size:10px">● High</span>
+      </div>
+      <div class="prop-body">Issue non-conformance report requesting revised datasheet confirming MAWP ≥ 165 bar per spec §4.2.1. Est. 5–7 day turnaround.</div>
+      <div class="prop-btns"><button class="btn g">Accept ✓</button><button class="btn r">Reject ✗</button><button class="btn">Edit</button></div>
+    </div>
+    <div class="prop">
+      <div class="prop-hd">
+        <span style="font-size:10px;font-weight:500;color:var(--t3)">Option B</span>
+        <span style="font-size:11px;font-weight:500;flex:1">Raise formal deviation</span>
+        <span class="prop-conf m" style="font-size:10px">● Med</span>
+      </div>
+      <div class="prop-body">Accept 152 bar as-built. Raise deviation note — requires discipline lead sign-off. IMF object updated with deviation flag.</div>
+      <div class="prop-btns"><button class="btn g">Accept ✓</button><button class="btn r">Reject ✗</button><button class="btn">Edit</button></div>
+    </div>
+    <div class="prop">
+      <div class="prop-hd">
+        <span style="font-size:10px;font-weight:500;color:var(--t3)">Option C</span>
+        <span style="font-size:11px;font-weight:500;flex:1">Re-evaluate process spec</span>
+        <span class="prop-conf l" style="font-size:10px">● Low</span>
+      </div>
+      <div class="prop-body">Evaluate if 152 bar sufficient. Requires process engineer review, P&ID update and hazard study revision.</div>
+      <div class="prop-btns"><button class="btn g">Accept ✓</button><button class="btn r">Reject ✗</button><button class="btn">Edit</button></div>
+    </div>
+    <div class="lbl" style="margin-top:8px;margin-bottom:5px">Action tracker</div>
+    <div class="tr-row"><span class="tr-dot" style="background:var(--green)"></span><span style="font-size:11px;color:var(--t2);flex:1">NCR issued — HX-0420 IMF class</span><span style="font-size:10px;color:var(--t3)">2h ago</span></div>
+    <div class="tr-row"><span class="tr-dot" style="background:var(--amber)"></span><span style="font-size:11px;color:var(--t2);flex:1">VLV-0887 v2.1 diff — awaiting review</span><span style="font-size:10px;color:var(--t3)">4h ago</span></div>
+    <div class="tr-row"><span class="tr-dot" style="background:var(--red)"></span><span style="font-size:11px;color:var(--t2);flex:1">PMP-1140 CE cert — vendor chased</span><span style="font-size:10px;color:var(--t3)">1d ago</span></div>
+    <div class="tr-row"><span class="tr-dot" style="background:var(--green)"></span><span style="font-size:11px;color:var(--t2);flex:1">C-2201 package closed — 97%</span><span style="font-size:10px;color:var(--t3)">2d ago</span></div>
+  </div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+function switchView(v) {
+  ['pid','3d','graph'].forEach(id => {
+    const el = document.getElementById('view-'+id);
+    if(el) el.style.display = id===v ? (id==='pid'?'block':'flex') : 'none';
+    const btn = document.getElementById('vb-'+id);
+    if(btn) btn.classList.toggle('on', id===v);
+  });
+}
+document.querySelectorAll('tbody tr').forEach(row => {
+  row.addEventListener('click', function(){
+    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+</script>
+</body>
+</html>
