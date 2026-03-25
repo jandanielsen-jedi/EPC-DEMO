@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop Workstation — Package Engineer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+  --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+  --b2:rgba(44,44,42,.25);--b3:rgba(44,44,42,.12);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+  --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;color:var(--t1);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+    --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+    --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+    --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+    --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+    --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+    --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+    --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+  }
+}
+html,body{height:100%;overflow:hidden;background:var(--bg3)}
+
+/* topbar */
+.topbar{height:48px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.logo{font-size:14px;font-weight:600;letter-spacing:-.02em}
+.logo span{color:var(--blue)}
+.tb-sep{color:var(--b2)}
+.tb-sub{font-size:11px;color:var(--t3)}
+.spacer{flex:1}
+.tb-pill{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500}
+.tb-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* layout */
+.workspace{display:flex;height:calc(100vh - 48px);overflow:hidden}
+.left{width:248px;flex-shrink:0;background:var(--bg1);border-right:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
+.centre{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg3)}
+.right{width:272px;flex-shrink:0;background:var(--bg1);border-left:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
+
+/* panel headers */
+.ph{padding:10px 12px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0}
+.ph-title{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.ph-sub{font-size:11px;color:var(--t2);margin-top:2px}
+
+/* ── LEFT: system status ── */
+.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b3);border-bottom:0.5px solid var(--b3)}
+.sys-cell{background:var(--bg1);padding:8px 12px}
+.sys-label{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.sys-val{font-size:16px;font-weight:500;margin-top:1px}
+.sys-unit{font-size:10px;color:var(--t3);font-weight:400}
+
+/* action queue */
+.aq-scroll{flex:1;overflow-y:auto;padding:6px}
+.aq-item{border:0.5px solid var(--b3);border-radius:8px;padding:10px;margin-bottom:6px;background:var(--bg2);cursor:pointer;transition:border-color .15s}
+.aq-item:hover{border-color:var(--b2)}
+.aq-item.urgent{border-color:rgba(226,75,74,.35);background:var(--red-bg)}
+.aq-item.pending{border-color:rgba(186,117,23,.3);background:var(--amber-bg)}
+.aq-header{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.aq-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.aq-title{font-size:12px;font-weight:500;color:var(--t1);flex:1;line-height:1.3}
+.aq-time{font-size:10px;color:var(--t3)}
+.aq-desc{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
+.aq-btns{display:flex;gap:5px}
+.aq-btn{flex:1;font-size:11px;padding:4px 0;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
+.aq-btn.approve{background:var(--green-bg);border-color:rgba(99,153,34,.3);color:var(--green-t)}
+.aq-btn.deny{background:var(--red-bg);border-color:rgba(226,75,74,.3);color:var(--red-t)}
+.aq-btn.defer{background:var(--bg2);color:var(--t3)}
+
+/* ── CENTRE ── */
+.centre-tabs{background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;padding:0 16px;flex-shrink:0}
+.ctab{font-size:12px;padding:10px 12px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px}
+.ctab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+
+.pid-area{flex:1;overflow:hidden;position:relative}
+.pid-area svg{width:100%;height:100%}
+
+/* completeness strip */
+.completeness{height:36px;background:var(--bg1);border-top:0.5px solid var(--b3);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+.cs-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.cs-bar-wrap{flex:1;height:6px;background:var(--b3);border-radius:3px;overflow:hidden}
+.cs-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green) 0%,var(--blue) 100%);transition:width .4s}
+.cs-pct{font-size:11px;font-weight:600;color:var(--t1);white-space:nowrap}
+.cs-chips{display:flex;gap:6px}
+.cs-chip{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:500;white-space:nowrap}
+
+/* ── RIGHT ── */
+.run-section{padding:10px 12px;border-bottom:0.5px solid var(--b3)}
+.run-header{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.run-title{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;flex:1}
+.run-badge{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500}
+
+.param-row{display:flex;align-items:center;margin-bottom:5px}
+.param-label{font-size:11px;color:var(--t2);flex:1}
+.param-val{font-size:12px;font-weight:500;color:var(--t1)}
+.param-unit{font-size:10px;color:var(--t3);margin-left:2px}
+
+.run-btn-row{display:flex;gap:6px;margin-top:10px}
+.rbtn{flex:1;padding:7px;border-radius:6px;font-size:12px;font-weight:500;border:0.5px solid var(--b2);cursor:pointer;text-align:center}
+.rbtn.start{background:var(--blue);color:#fff;border-color:var(--blue)}
+.rbtn.stop{background:var(--red-bg);color:var(--red-t);border-color:rgba(226,75,74,.3)}
+.rbtn.hold{background:var(--amber-bg);color:var(--amber-t);border-color:rgba(186,117,23,.25)}
+
+/* proposals */
+.prop-scroll{flex:1;overflow-y:auto;padding:8px}
+.prop-item{border:0.5px solid var(--b3);border-radius:8px;padding:10px;margin-bottom:6px;background:var(--bg2)}
+.prop-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px}
+.prop-tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
+.prop-title{font-size:12px;font-weight:500;color:var(--t1);line-height:1.3;flex:1}
+.prop-body{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
+.prop-delta{font-size:11px;font-weight:500;color:var(--green)}
+.prop-btns{display:flex;gap:5px}
+.pbtn{flex:1;font-size:11px;padding:4px;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
+.pbtn.apply{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Package<span>Engineer</span></div>
+  <span class="tb-sep">/</span>
+  <span class="tb-sub">Workstation</span>
+  <div class="spacer"></div>
+  <div class="tb-status"><div class="live-dot"></div> Live · NCS-1A</div>
+  <span class="tb-pill" style="background:var(--blue-bg);color:var(--blue-t)">Compression train 2</span>
+  <span class="tb-pill" style="background:var(--amber-bg);color:var(--amber-t)">3 actions pending</span>
+</div>
+
+<div class="workspace">
+
+  <!-- ── LEFT ── -->
+  <div class="left">
+    <div class="ph">
+      <div class="ph-title">Command centre</div>
+      <div class="ph-sub">C-4420A · Gas Compressor</div>
+    </div>
+
+    <div class="sys-grid">
+      <div class="sys-cell">
+        <div class="sys-label">Suction P</div>
+        <div class="sys-val" style="color:var(--blue)">42.3 <span class="sys-unit">bar</span></div>
+      </div>
+      <div class="sys-cell">
+        <div class="sys-label">Discharge P</div>
+        <div class="sys-val">138.7 <span class="sys-unit">bar</span></div>
+      </div>
+      <div class="sys-cell">
+        <div class="sys-label">Speed</div>
+        <div class="sys-val">8 420 <span class="sys-unit">rpm</span></div>
+      </div>
+      <div class="sys-cell">
+        <div class="sys-label">Temp out</div>
+        <div class="sys-val" style="color:var(--amber)">94 <span class="sys-unit">°C</span></div>
+      </div>
+      <div class="sys-cell">
+        <div class="sys-label">Flow</div>
+        <div class="sys-val">1 820 <span class="sys-unit">Nm³/h</span></div>
+      </div>
+      <div class="sys-cell">
+        <div class="sys-label">Vibration</div>
+        <div class="sys-val" style="color:var(--green)">2.1 <span class="sys-unit">mm/s</span></div>
+      </div>
+    </div>
+
+    <div class="ph" style="margin-top:0">
+      <div class="ph-title">Action queue</div>
+      <div class="ph-sub">3 pending · 1 urgent</div>
+    </div>
+
+    <div class="aq-scroll">
+
+      <div class="aq-item urgent">
+        <div class="aq-header">
+          <div class="aq-icon" style="background:var(--red-bg);color:var(--red-t)">!</div>
+          <div class="aq-title">High discharge temperature</div>
+          <div class="aq-time">0m ago</div>
+        </div>
+        <div class="aq-desc">Discharge temp reached 94°C — limit 90°C. Agent proposes reducing speed by 180 rpm and opening bypass valve XV-4421 by 8%.</div>
+        <div class="aq-btns">
+          <div class="aq-btn approve">Approve</div>
+          <div class="aq-btn deny">Deny</div>
+          <div class="aq-btn defer">Defer</div>
+        </div>
+      </div>
+
+      <div class="aq-item pending">
+        <div class="aq-header">
+          <div class="aq-icon" style="background:var(--amber-bg);color:var(--amber-t)">~</div>
+          <div class="aq-title">Anti-surge recycle adjustment</div>
+          <div class="aq-time">4m ago</div>
+        </div>
+        <div class="aq-desc">Surge margin at 8.3% — below 10% target. Increase recycle valve FV-4403 from 12% to 19% opening.</div>
+        <div class="aq-btns">
+          <div class="aq-btn approve">Approve</div>
+          <div class="aq-btn deny">Deny</div>
+          <div class="aq-btn defer">Defer</div>
+        </div>
+      </div>
+
+      <div class="aq-item">
+        <div class="aq-header">
+          <div class="aq-icon" style="background:var(--blue-bg);color:var(--blue-t)">i</div>
+          <div class="aq-title">Scheduled lube oil sample</div>
+          <div class="aq-time">12m ago</div>
+        </div>
+        <div class="aq-desc">72-hour lube oil sample interval reached. Notify field technician to collect sample from drain point LP-4420-03.</div>
+        <div class="aq-btns">
+          <div class="aq-btn approve">Approve</div>
+          <div class="aq-btn deny">Deny</div>
+          <div class="aq-btn defer">Defer</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CENTRE ── -->
+  <div class="centre">
+    <div class="centre-tabs">
+      <div class="ctab active">P&amp;ID</div>
+      <div class="ctab">3D Model</div>
+      <div class="ctab">Knowledge graph</div>
+      <div class="ctab">Documents</div>
+    </div>
+
+    <div class="pid-area">
+      <svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg" style="background:var(--bg2)">
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="var(--t3)"/>
+          </marker>
+        </defs>
+
+        <!-- grid lines -->
+        <g stroke="var(--b3)" stroke-width="0.5">
+          <line x1="0" y1="120" x2="900" y2="120"/>
+          <line x1="0" y1="240" x2="900" y2="240"/>
+          <line x1="0" y1="360" x2="900" y2="360"/>
+          <line x1="180" y1="0" x2="180" y2="480"/>
+          <line x1="360" y1="0" x2="360" y2="480"/>
+          <line x1="540" y1="0" x2="540" y2="480"/>
+          <line x1="720" y1="0" x2="720" y2="480"/>
+        </g>
+
+        <!-- ── Inlet separator V-4401 ── -->
+        <rect x="60" y="170" width="90" height="130" rx="45" fill="var(--bg1)" stroke="var(--t2)" stroke-width="1.5"/>
+        <text x="105" y="230" text-anchor="middle" font-size="10" fill="var(--t1)" font-weight="600">V-4401</text>
+        <text x="105" y="243" text-anchor="middle" font-size="9" fill="var(--t3)">Inlet sep.</text>
+        <!-- liquid level indicator -->
+        <rect x="60" y="243" width="90" height="57" rx="0" fill="var(--blue-bg)" opacity=".5" clip-path="url(#v4401clip)"/>
+        <defs><clipPath id="v4401clip"><rect x="60" y="170" width="90" height="130" rx="45"/></clipPath></defs>
+        <line x1="60" y1="243" x2="150" y2="243" stroke="var(--blue)" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="155" y="246" font-size="9" fill="var(--blue-t)">52%</text>
+
+        <!-- pipe: V-4401 outlet → suction scrubber -->
+        <line x1="150" y1="210" x2="230" y2="210" stroke="var(--t2)" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="158" y="202" width="30" height="16" rx="3" fill="var(--bg1)" stroke="var(--b3)" stroke-width=".5"/>
+        <text x="173" y="213" text-anchor="middle" font-size="8" fill="var(--t2)">FV-01</text>
+
+        <!-- ── Suction scrubber V-4402 ── -->
+        <rect x="230" y="185" width="60" height="90" rx="8" fill="var(--bg1)" stroke="var(--t2)" stroke-width="1.5"/>
+        <text x="260" y="226" text-anchor="middle" font-size="10" fill="var(--t1)" font-weight="600">V-4402</text>
+        <text x="260" y="238" text-anchor="middle" font-size="9" fill="var(--t3)">Suction</text>
+
+        <!-- pipe: scrubber → compressor -->
+        <line x1="290" y1="220" x2="370" y2="220" stroke="var(--t2)" stroke-width="2.5" marker-end="url(#arr)"/>
+        <!-- suction PT -->
+        <circle cx="320" cy="208" r="9" fill="var(--bg1)" stroke="var(--blue)" stroke-width="1.5"/>
+        <text x="320" y="211" text-anchor="middle" font-size="7" fill="var(--blue-t)" font-weight="700">PT</text>
+        <line x1="320" y1="217" x2="320" y2="220" stroke="var(--blue)" stroke-width="1"/>
+        <text x="320" y="200" text-anchor="middle" font-size="8" fill="var(--t3)">42.3 bar</text>
+
+        <!-- ── Compressor C-4420A ── -->
+        <g transform="translate(370,185)">
+          <!-- body -->
+          <rect x="0" y="0" width="120" height="80" rx="8" fill="var(--blue-bg)" stroke="var(--blue)" stroke-width="2"/>
+          <!-- impeller symbol -->
+          <circle cx="60" cy="40" r="22" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
+          <line x1="60" y1="18" x2="60" y2="62" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
+          <line x1="38" y1="40" x2="82" y2="40" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
+          <line x1="44" y1="24" x2="76" y2="56" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
+          <line x1="76" y1="24" x2="44" y2="56" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
+          <text x="60" y="108" text-anchor="middle" font-size="11" fill="var(--t1)" font-weight="700">C-4420A</text>
+          <text x="60" y="120" text-anchor="middle" font-size="9" fill="var(--t3)">Gas Compressor</text>
+          <!-- speed label -->
+          <text x="60" y="38" text-anchor="middle" font-size="9" fill="var(--blue-t)" font-weight="600">8 420</text>
+          <text x="60" y="49" text-anchor="middle" font-size="8" fill="var(--blue-t)">rpm</text>
+        </g>
+
+        <!-- pipe: compressor → discharge cooler -->
+        <line x1="490" y1="225" x2="590" y2="225" stroke="var(--t2)" stroke-width="2.5" marker-end="url(#arr)"/>
+        <!-- discharge PT -->
+        <circle cx="530" cy="213" r="9" fill="var(--bg1)" stroke="var(--red)" stroke-width="1.5"/>
+        <text x="530" y="216" text-anchor="middle" font-size="7" fill="var(--red-t)" font-weight="700">PT</text>
+        <line x1="530" y1="222" x2="530" y2="225" stroke="var(--red)" stroke-width="1"/>
+        <text x="530" y="205" text-anchor="middle" font-size="8" fill="var(--t3)">138.7 bar</text>
+        <!-- TT -->
+        <circle cx="555" cy="213" r="9" fill="var(--bg1)" stroke="var(--amber)" stroke-width="1.5"/>
+        <text x="555" y="216" text-anchor="middle" font-size="7" fill="var(--amber-t)" font-weight="700">TT</text>
+        <line x1="555" y1="222" x2="555" y2="225" stroke="var(--amber)" stroke-width="1"/>
+        <text x="555" y="205" text-anchor="middle" font-size="8" fill="var(--amber-t)">94°C !</text>
+
+        <!-- ── Discharge cooler E-4401 ── -->
+        <g transform="translate(590,195)">
+          <rect x="0" y="0" width="90" height="55" rx="6" fill="var(--bg1)" stroke="var(--t2)" stroke-width="1.5"/>
+          <!-- heat exchanger symbol lines -->
+          <line x1="0" y1="27" x2="90" y2="27" stroke="var(--t3)" stroke-width="1"/>
+          <line x1="20" y1="10" x2="20" y2="44" stroke="var(--t3)" stroke-width="1"/>
+          <line x1="40" y1="10" x2="40" y2="44" stroke="var(--t3)" stroke-width="1"/>
+          <line x1="60" y1="10" x2="60" y2="44" stroke="var(--t3)" stroke-width="1"/>
+          <text x="45" y="68" text-anchor="middle" font-size="10" fill="var(--t1)" font-weight="600">E-4401</text>
+          <text x="45" y="79" text-anchor="middle" font-size="9" fill="var(--t3)">Disch. cooler</text>
+        </g>
+
+        <!-- pipe: cooler → outlet -->
+        <line x1="680" y1="222" x2="820" y2="222" stroke="var(--t2)" stroke-width="2.5" marker-end="url(#arr)"/>
+        <rect x="726" y="214" width="30" height="16" rx="3" fill="var(--bg1)" stroke="var(--b3)" stroke-width=".5"/>
+        <text x="741" y="225" text-anchor="middle" font-size="8" fill="var(--t2)">XV-01</text>
+        <text x="820" y="226" font-size="10" fill="var(--t3)">→ export</text>
+
+        <!-- ── Anti-surge recycle line ── -->
+        <path d="M 490 210 L 490 140 L 260 140 L 260 185" fill="none" stroke="var(--purple)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+        <rect x="348" y="130" width="40" height="18" rx="3" fill="var(--bg1)" stroke="var(--purple)" stroke-width=".75"/>
+        <text x="368" y="142" text-anchor="middle" font-size="8" fill="var(--purple-t)" font-weight="600">FV-4403</text>
+        <text x="368" y="126" text-anchor="middle" font-size="8" fill="var(--purple-t)">19% open</text>
+        <text x="240" y="135" font-size="9" fill="var(--purple-t)">Anti-surge recycle</text>
+
+        <!-- ── Lube oil system (simplified) ── -->
+        <rect x="400" y="340" width="80" height="50" rx="6" fill="var(--bg1)" stroke="var(--t3)" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="440" y="362" text-anchor="middle" font-size="10" fill="var(--t2)" font-weight="600">LO-SYS</text>
+        <text x="440" y="375" text-anchor="middle" font-size="9" fill="var(--t3)">Lube oil</text>
+        <line x1="440" y1="340" x2="440" y2="265" stroke="var(--t3)" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <!-- labels -->
+        <text x="14" y="20" font-size="10" fill="var(--t3)" font-weight="500">NCS-1A · C-4420A Compressor Train · P&amp;ID Simplified</text>
+        <text x="14" y="34" font-size="9" fill="var(--t3)">Live process values · Updated 09:14:32</text>
+
+        <!-- alarm indicator -->
+        <rect x="820" y="10" width="68" height="22" rx="4" fill="var(--red-bg)" stroke="rgba(226,75,74,.4)" stroke-width=".75"/>
+        <text x="854" y="24" text-anchor="middle" font-size="9" fill="var(--red-t)" font-weight="600">TEMP HIGH</text>
+      </svg>
+    </div>
+
+    <div class="completeness">
+      <span class="cs-label">Package completeness</span>
+      <div class="cs-bar-wrap"><div class="cs-bar" style="width:62%"></div></div>
+      <span class="cs-pct">62%</span>
+      <div class="cs-chips">
+        <span class="cs-chip" style="background:var(--green-bg);color:var(--green-t)">Docs 78%</span>
+        <span class="cs-chip" style="background:var(--amber-bg);color:var(--amber-t)">Instr 55%</span>
+        <span class="cs-chip" style="background:var(--red-bg);color:var(--red-t)">P&ID 40%</span>
+        <span class="cs-chip" style="background:var(--blue-bg);color:var(--blue-t)">3D 70%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT ── -->
+  <div class="right">
+    <div class="ph">
+      <div class="ph-title">Run controls</div>
+      <div class="ph-sub">C-4420A · Auto mode</div>
+    </div>
+
+    <div class="run-section">
+      <div class="run-header">
+        <span class="run-title">Setpoints</span>
+        <span class="run-badge" style="background:var(--green-bg);color:var(--green-t)">Running</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Speed setpoint</span>
+        <span class="param-val">8 420 <span class="param-unit">rpm</span></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Pressure ratio</span>
+        <span class="param-val">3.28</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Surge margin</span>
+        <span class="param-val" style="color:var(--amber)">8.3 <span class="param-unit">%</span></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Recycle valve</span>
+        <span class="param-val">12 <span class="param-unit">%</span></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Max temp limit</span>
+        <span class="param-val">90 <span class="param-unit">°C</span></span>
+      </div>
+      <div class="run-btn-row">
+        <div class="rbtn hold">Hold</div>
+        <div class="rbtn stop">Stop</div>
+      </div>
+    </div>
+
+    <div class="ph">
+      <div class="ph-title">Agent proposals</div>
+      <div class="ph-sub">4 active · confidence ≥ 0.82</div>
+    </div>
+
+    <div class="prop-scroll">
+
+      <div class="prop-item">
+        <div class="prop-top">
+          <span class="prop-tag" style="background:var(--red-bg);color:var(--red-t)">Urgent</span>
+        </div>
+        <div class="prop-title">Reduce speed + open bypass to lower discharge temp</div>
+        <div class="prop-body">Speed 8 420→8 240 rpm · XV-4421 8% open. Temp forecast: 94→87°C in 3 min.</div>
+        <div class="prop-delta">-7°C · confidence 0.94</div>
+        <div class="prop-btns" style="margin-top:6px">
+          <div class="pbtn apply">Apply</div>
+          <div class="pbtn">Modify</div>
+          <div class="pbtn">Skip</div>
+        </div>
+      </div>
+
+      <div class="prop-item">
+        <div class="prop-top">
+          <span class="prop-tag" style="background:var(--amber-bg);color:var(--amber-t)">Recommended</span>
+        </div>
+        <div class="prop-title">Increase recycle valve to restore surge margin</div>
+        <div class="prop-body">FV-4403: 12%→19%. Surge margin forecast: 8.3→11.2%. Minor efficiency impact (~0.4%).</div>
+        <div class="prop-delta">+2.9% surge margin · confidence 0.88</div>
+        <div class="prop-btns" style="margin-top:6px">
+          <div class="pbtn apply">Apply</div>
+          <div class="pbtn">Modify</div>
+          <div class="pbtn">Skip</div>
+        </div>
+      </div>
+
+      <div class="prop-item">
+        <div class="prop-top">
+          <span class="prop-tag" style="background:var(--blue-bg);color:var(--blue-t)">Optimise</span>
+        </div>
+        <div class="prop-title">Schedule lube oil cooler backflush</div>
+        <div class="prop-body">LO cooler efficiency down 6% over last 72h. Backflush during next scheduled hold window (est. 14:00).</div>
+        <div class="prop-btns" style="margin-top:6px">
+          <div class="pbtn apply">Schedule</div>
+          <div class="pbtn">Skip</div>
+        </div>
+      </div>
+
+      <div class="prop-item">
+        <div class="prop-top">
+          <span class="prop-tag" style="background:var(--green-bg);color:var(--green-t)">Routine</span>
+        </div>
+        <div class="prop-title">Update vibration baseline — bearing 3</div>
+        <div class="prop-body">30-day baseline window elapsed. Current RMS 2.1 mm/s is within limits. Update reference to current values.</div>
+        <div class="prop-btns" style="margin-top:6px">
+          <div class="pbtn apply">Update</div>
+          <div class="pbtn">Skip</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
