@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Surface — Package Engineer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+  --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+  --b2:rgba(44,44,42,.25);--b3:rgba(44,44,42,.12);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+  --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;color:var(--t1);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+  --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+  --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+  --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+  --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+  --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+  --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+  --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+}}
+html,body{min-height:100%;background:var(--bg3)}
+.topbar{height:48px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;padding:0 16px;gap:10px}
+.logo{font-size:14px;font-weight:600;letter-spacing:-.02em}.logo span{color:var(--blue)}
+.tb-sep{color:var(--b2)}.tb-sub{font-size:11px;color:var(--t3)}.spacer{flex:1}
+.tb-pill{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500}
+.stage{display:flex;justify-content:center;align-items:flex-start;gap:40px;padding:40px 32px;min-height:calc(100vh - 48px);flex-wrap:wrap}
+
+/* phone frame */
+.phone{width:320px;flex-shrink:0}
+.phone-label{text-align:center;font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
+.phone-frame{width:320px;background:#111;border-radius:44px;padding:10px;box-shadow:0 0 0 1.5px #333,0 24px 60px rgba(0,0,0,.35)}
+.phone-screen{border-radius:36px;overflow:hidden;position:relative;min-height:560px;display:flex;flex-direction:column}
+.notch{height:30px;background:inherit;display:flex;align-items:center;justify-content:center;position:relative;z-index:10;flex-shrink:0}
+.notch-pill{width:90px;height:24px;background:#000;border-radius:20px}
+.status-bar{display:flex;align-items:center;padding:4px 20px;background:inherit;font-size:11px;flex-shrink:0}
+.sb-time{font-weight:600;flex:1}
+.sb-icons{display:flex;gap:5px;align-items:center;font-size:10px}
+
+/* ── Screen 1: Lock screen ── */
+.lock-bg{background:linear-gradient(160deg,#0a2a4a 0%,#0c1f35 60%,#1a0a2e 100%);flex:1;display:flex;flex-direction:column;align-items:center;padding-bottom:24px}
+.lock-time{font-size:58px;font-weight:200;color:#fff;margin-top:30px;letter-spacing:-2px}
+.lock-date{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:28px}
+.lock-notif{width:285px;background:rgba(255,255,255,.12);backdrop-filter:blur(20px);border-radius:16px;padding:14px 16px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,.15)}
+.ln-app{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ln-app-icon{width:22px;height:22px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.ln-app-name{font-size:11px;color:rgba(255,255,255,.7);font-weight:500}
+.ln-app-time{font-size:10px;color:rgba(255,255,255,.45);margin-left:auto}
+.ln-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:3px}
+.ln-body{font-size:12px;color:rgba(255,255,255,.7);line-height:1.4}
+.ln-actions{display:flex;gap:8px;margin-top:10px}
+.ln-btn{flex:1;text-align:center;padding:7px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer}
+.ln-ok{background:rgba(99,153,34,.35);color:#b8e07a;border:0.5px solid rgba(99,153,34,.4)}
+.ln-deny{background:rgba(226,75,74,.3);color:#f09595;border:0.5px solid rgba(226,75,74,.35)}
+.ln-defer{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);border:0.5px solid rgba(255,255,255,.15)}
+.lock-notif-small{width:285px;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border-radius:16px;padding:12px 14px;margin-bottom:8px;border:0.5px solid rgba(255,255,255,.1)}
+.lns-row{display:flex;align-items:center;gap:8px}
+.lns-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.lns-text{font-size:12px;color:rgba(255,255,255,.65);flex:1}
+.lns-time{font-size:10px;color:rgba(255,255,255,.35)}
+.lock-slider{width:285px;height:50px;background:rgba(255,255,255,.1);border-radius:25px;margin-top:auto;display:flex;align-items:center;padding:0 18px;gap:10px;border:0.5px solid rgba(255,255,255,.12)}
+.ls-text{font-size:13px;color:rgba(255,255,255,.5);flex:1}
+.ls-arrow{font-size:18px;color:rgba(255,255,255,.3)}
+
+/* ── Screen 2: Action queue ── */
+.app-bg{background:var(--bg3);flex:1;display:flex;flex-direction:column}
+.app-header{background:var(--bg1);padding:12px 16px;border-bottom:0.5px solid var(--b3)}
+.app-title{font-size:17px;font-weight:600;color:var(--t1)}
+.app-sub{font-size:12px;color:var(--t3);margin-top:2px}
+.app-tabs{display:flex;background:var(--bg1);border-bottom:0.5px solid var(--b3)}
+.app-tab{flex:1;text-align:center;padding:9px;font-size:11px;font-weight:500;color:var(--t3);border-bottom:2px solid transparent}
+.app-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.aq-list{flex:1;overflow-y:auto;padding:10px}
+.aq-card{background:var(--bg1);border-radius:12px;padding:12px;margin-bottom:8px;border:0.5px solid var(--b3)}
+.aq-card.urgent{border-color:rgba(226,75,74,.35);background:var(--red-bg)}
+.aq-card-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.aq-card-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.aq-card-text{flex:1}
+.aq-card-title{font-size:13px;font-weight:600;color:var(--t1);line-height:1.3}
+.aq-card-meta{font-size:11px;color:var(--t3);margin-top:1px}
+.aq-card-body{font-size:12px;color:var(--t2);line-height:1.45;margin-bottom:8px}
+.aq-card-btns{display:flex;gap:6px}
+.aqcb{flex:1;padding:8px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;border:none}
+.aqcb-ok{background:var(--green-bg);color:var(--green-t)}
+.aqcb-deny{background:var(--red-bg);color:var(--red-t)}
+.aqcb-more{background:var(--bg2);color:var(--t2);border:0.5px solid var(--b3)}
+.tab-bar{height:56px;background:var(--bg1);border-top:0.5px solid var(--b3);display:flex;align-items:center;justify-content:space-around;padding:0 8px;flex-shrink:0}
+.tab-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;flex:1}
+.tab-btn-icon{font-size:20px;line-height:1}
+.tab-btn-label{font-size:9px;font-weight:500;color:var(--t3)}
+.tab-btn.active .tab-btn-label{color:var(--blue)}
+
+/* ── Screen 3: Proposal detail ── */
+.det-bg{background:var(--bg3);flex:1;display:flex;flex-direction:column}
+.det-nav{background:var(--bg1);display:flex;align-items:center;padding:10px 16px;gap:10px;border-bottom:0.5px solid var(--b3)}
+.det-back{font-size:15px;color:var(--blue)}
+.det-nav-title{font-size:15px;font-weight:600;color:var(--t1);flex:1;text-align:center}
+.det-scroll{flex:1;overflow-y:auto;padding:14px}
+.det-card{background:var(--bg1);border-radius:12px;padding:14px;margin-bottom:10px;border:0.5px solid var(--b3)}
+.det-badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;margin-bottom:8px;display:inline-block}
+.det-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:6px;line-height:1.3}
+.det-body{font-size:13px;color:var(--t2);line-height:1.55}
+.det-kpi-row{display:flex;gap:8px;margin-top:10px}
+.det-kpi{flex:1;background:var(--bg2);border-radius:9px;padding:10px;text-align:center}
+.det-kpi-val{font-size:18px;font-weight:600;color:var(--t1)}
+.det-kpi-label{font-size:10px;color:var(--t3);margin-top:2px}
+.det-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--b3);align-items:center}
+.det-row:last-child{border-bottom:none}
+.det-row-label{font-size:12px;color:var(--t3)}
+.det-row-val{font-size:12px;font-weight:500;color:var(--t1)}
+.det-action-bar{background:var(--bg1);padding:12px 14px;border-top:0.5px solid var(--b3);display:flex;gap:8px;flex-shrink:0}
+.dab-btn{flex:1;padding:13px;border-radius:12px;font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:none}
+.dab-approve{background:var(--blue);color:#fff}
+.dab-deny{background:var(--red-bg);color:var(--red-t);border:0.5px solid rgba(226,75,74,.25)}
+.dab-defer{background:var(--bg2);color:var(--t2);border:0.5px solid var(--b3)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">Package<span>Engineer</span></div>
+  <span class="tb-sep">/</span>
+  <span class="tb-sub">Mobile surface</span>
+  <div class="spacer"></div>
+  <span class="tb-pill" style="background:var(--blue-bg);color:var(--blue-t)">NCS-1A · C-4420A</span>
+</div>
+
+<div class="stage">
+
+  <!-- ── Phone 1: Lock screen ── -->
+  <div class="phone">
+    <div class="phone-label">Lock screen interrupt</div>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div style="background:linear-gradient(160deg,#0a2a4a 0%,#0c1f35 60%,#1a0a2e 100%);flex:1;display:flex;flex-direction:column;align-items:center;padding-bottom:24px">
+          <div class="notch"><div class="notch-pill"></div></div>
+          <div style="display:flex;justify-content:space-between;width:100%;padding:2px 20px;font-size:11px;font-weight:500;color:rgba(255,255,255,.8);margin-top:2px">
+            <span>09:14</span><div style="display:flex;gap:5px;align-items:center"><span>▲</span><span>◼</span><span>⬛</span></div>
+          </div>
+          <div class="lock-time">09:14</div>
+          <div class="lock-date">Wednesday 25 March 2026</div>
+
+          <div class="lock-notif">
+            <div class="ln-app">
+              <div class="ln-app-icon">PE</div>
+              <span class="ln-app-name">Package Engineer</span>
+              <span class="ln-app-time">now</span>
+            </div>
+            <div class="ln-title">⚠ Action required — C-4420A</div>
+            <div class="ln-body">High discharge temperature 94°C (limit 90°C). Agent proposes speed reduction + bypass valve. Approve?</div>
+            <div class="ln-actions">
+              <div class="ln-btn ln-ok">Approve</div>
+              <div class="ln-btn ln-deny">Deny</div>
+              <div class="ln-btn ln-defer">Later</div>
+            </div>
+          </div>
+
+          <div class="lock-notif-small">
+            <div class="lns-row">
+              <div class="lns-dot" style="background:#EF9F27"></div>
+              <span class="lns-text">Anti-surge recycle — action pending</span>
+              <span class="lns-time">4m</span>
+            </div>
+          </div>
+          <div class="lock-notif-small">
+            <div class="lns-row">
+              <div class="lns-dot" style="background:#185FA5"></div>
+              <span class="lns-text">Lube oil sample due — WO-88241</span>
+              <span class="lns-time">12m</span>
+            </div>
+          </div>
+
+          <div class="lock-slider">
+            <div class="ls-arrow">›</div>
+            <span class="ls-text">Slide to unlock</span>
+            <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px">⌂</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Phone 2: Action queue ── -->
+  <div class="phone">
+    <div class="phone-label">Action queue</div>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="app-bg">
+          <div style="background:var(--bg1);padding:0 16px 0;border-bottom:0.5px solid var(--b3)">
+            <div class="notch" style="background:var(--bg1)"><div class="notch-pill" style="background:var(--bg3);width:70px;height:18px"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:2px 4px 6px">
+              <span>09:14</span><span>●●●</span>
+            </div>
+          </div>
+          <div class="app-header">
+            <div class="app-title">Action queue</div>
+            <div class="app-sub">NCS-1A · C-4420A · 3 pending</div>
+          </div>
+          <div class="app-tabs">
+            <div class="app-tab active">Pending (3)</div>
+            <div class="app-tab">History</div>
+            <div class="app-tab">Proposals</div>
+          </div>
+          <div class="aq-list">
+            <div class="aq-card urgent">
+              <div class="aq-card-top">
+                <div class="aq-card-icon" style="background:var(--red-bg);color:var(--red-t)">!</div>
+                <div class="aq-card-text">
+                  <div class="aq-card-title">High discharge temperature</div>
+                  <div class="aq-card-meta">C-4420A · 0 min ago · Urgent</div>
+                </div>
+              </div>
+              <div class="aq-card-body">Temp 94°C (limit 90°C). Reduce speed 180 rpm, open bypass XV-4421 8%.</div>
+              <div class="aq-card-btns">
+                <div class="aqcb aqcb-ok">Approve</div>
+                <div class="aqcb aqcb-deny">Deny</div>
+                <div class="aqcb aqcb-more">Detail →</div>
+              </div>
+            </div>
+            <div class="aq-card">
+              <div class="aq-card-top">
+                <div class="aq-card-icon" style="background:var(--amber-bg);color:var(--amber-t)">~</div>
+                <div class="aq-card-text">
+                  <div class="aq-card-title">Anti-surge recycle adj.</div>
+                  <div class="aq-card-meta">C-4420A · 4 min ago</div>
+                </div>
+              </div>
+              <div class="aq-card-body">Surge margin 8.3% → target 10%. Increase FV-4403 to 19% open.</div>
+              <div class="aq-card-btns">
+                <div class="aqcb aqcb-ok">Approve</div>
+                <div class="aqcb aqcb-deny">Deny</div>
+                <div class="aqcb aqcb-more">Detail →</div>
+              </div>
+            </div>
+            <div class="aq-card">
+              <div class="aq-card-top">
+                <div class="aq-card-icon" style="background:var(--blue-bg);color:var(--blue-t)">i</div>
+                <div class="aq-card-text">
+                  <div class="aq-card-title">Lube oil sample — WO-88241</div>
+                  <div class="aq-card-meta">P-4401A · 12 min ago</div>
+                </div>
+              </div>
+              <div class="aq-card-body">72h interval elapsed. Notify tech to collect from LP-4420-03.</div>
+              <div class="aq-card-btns">
+                <div class="aqcb aqcb-ok">Approve</div>
+                <div class="aqcb aqcb-deny">Deny</div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-btn"><div class="tab-btn-icon">⚡</div><div class="tab-btn-label active" style="color:var(--blue)">Actions</div></div>
+            <div class="tab-btn"><div class="tab-btn-icon">📊</div><div class="tab-btn-label">Trends</div></div>
+            <div class="tab-btn"><div class="tab-btn-icon">📋</div><div class="tab-btn-label">Docs</div></div>
+            <div class="tab-btn"><div class="tab-btn-icon">👤</div><div class="tab-btn-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Phone 3: Proposal detail ── -->
+  <div class="phone">
+    <div class="phone-label">Proposal detail</div>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="det-bg">
+          <div style="background:var(--bg1);padding:0 16px 0;border-bottom:0.5px solid var(--b3)">
+            <div class="notch" style="background:var(--bg1)"><div class="notch-pill" style="background:var(--bg3);width:70px;height:18px"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);padding:2px 4px 6px">
+              <span>09:14</span><span>●●●</span>
+            </div>
+          </div>
+          <div class="det-nav">
+            <div class="det-back">‹ Queue</div>
+            <div class="det-nav-title">Proposal detail</div>
+            <div style="font-size:12px;color:var(--blue)">Share</div>
+          </div>
+          <div class="det-scroll">
+            <div class="det-card">
+              <div class="det-badge" style="background:var(--red-bg);color:var(--red-t)">URGENT</div>
+              <div class="det-title">Reduce speed + open bypass to lower discharge temperature</div>
+              <div class="det-body">Discharge temperature has exceeded the 90°C operating limit and reached 94°C. Root cause analysis points to reduced efficiency in E-4401 cooler (−6% over 72h). Proposed action reduces compressor speed and opens bypass to relieve thermal load.</div>
+              <div class="det-kpi-row">
+                <div class="det-kpi">
+                  <div class="det-kpi-val" style="color:var(--red)">94°C</div>
+                  <div class="det-kpi-label">Current</div>
+                </div>
+                <div class="det-kpi">
+                  <div class="det-kpi-val" style="color:var(--green)">87°C</div>
+                  <div class="det-kpi-label">Forecast</div>
+                </div>
+                <div class="det-kpi">
+                  <div class="det-kpi-val">0.94</div>
+                  <div class="det-kpi-label">Confidence</div>
+                </div>
+              </div>
+            </div>
+            <div class="det-card">
+              <div style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Proposed changes</div>
+              <div class="det-row"><span class="det-row-label">Speed setpoint</span><span class="det-row-val">8 420 → 8 240 rpm</span></div>
+              <div class="det-row"><span class="det-row-label">Bypass XV-4421</span><span class="det-row-val">0% → 8% open</span></div>
+              <div class="det-row"><span class="det-row-label">Expected duration</span><span class="det-row-val">~3 minutes to effect</span></div>
+              <div class="det-row"><span class="det-row-label">Flow impact</span><span class="det-row-val">−2.1% throughput</span></div>
+              <div class="det-row"><span class="det-row-label">Reversible</span><span class="det-row-val">Yes — auto-revert at 85°C</span></div>
+            </div>
+            <div class="det-card" style="background:var(--amber-bg);border-color:rgba(186,117,23,.2)">
+              <div style="font-size:12px;font-weight:600;color:var(--amber-t);margin-bottom:4px">Related action required</div>
+              <div style="font-size:12px;color:var(--amber-t);line-height:1.45">Schedule E-4401 backflush in next hold window to address root cause. WO-88310 drafted.</div>
+            </div>
+          </div>
+          <div class="det-action-bar">
+            <div class="dab-btn dab-approve">Approve</div>
+            <div class="dab-btn dab-deny">Deny</div>
+            <div class="dab-btn dab-defer">Defer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
