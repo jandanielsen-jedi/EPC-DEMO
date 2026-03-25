@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Package Engineer — Mobile Surface</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+  --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+  --b2:rgba(44,44,42,.22);--b3:rgba(44,44,42,.11);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+  --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:12px;color:var(--t1);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+    --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+    --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+    --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+    --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+    --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+    --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+  }
+}
+html,body{min-height:100%;background:var(--bg3)}
+
+/* Top nav */
+.topnav{height:38px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;gap:8px;padding:0 14px;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:13px;font-weight:600;color:var(--t1);letter-spacing:-.02em}
+.nav-logo span{color:var(--blue)}
+.spacer{flex:1}
+.nav-btn{font-size:11px;padding:3px 10px;border:0.5px solid var(--b2);border-radius:7px;background:none;color:var(--t2);cursor:pointer;text-decoration:none;display:inline-block}
+.nav-btn:hover{background:var(--bg2)}
+
+/* Layout — phones side by side on desktop, stacked on narrow screens */
+.outer{padding:24px 20px 40px;display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phone-label{font-size:11px;color:var(--t3);font-weight:500;text-align:center}
+
+/* Phone frame */
+.phone{width:260px;background:#e8e6dc;border-radius:38px;padding:10px;border:0.5px solid rgba(0,0,0,.15)}
+.screen{background:var(--bg1);border-radius:28px;overflow:hidden;min-height:520px;display:flex;flex-direction:column}
+
+/* Status bar */
+.sbar{display:flex;justify-content:space-between;padding:9px 14px 5px;background:var(--bg1)}
+.sbar-time{font-size:12px;font-weight:600;color:var(--t1)}
+.sbar-icons{display:flex;gap:3px;align-items:center}
+.sig{width:4px;height:4px;border-radius:50%;background:var(--t3)}
+
+/* Lock screen */
+.lock-bg{background:var(--bg2);flex:1;padding:12px 10px 16px}
+.lock-time{text-align:center;padding:16px 0 20px}
+.lock-time .big{font-size:36px;font-weight:300;color:var(--t1)}
+.lock-time .day{font-size:12px;color:var(--t3);margin-top:2px}
+.notif-card{background:rgba(255,255,255,.75);backdrop-filter:blur(10px);border-radius:14px;padding:11px 13px;margin-bottom:7px;border:0.5px solid rgba(255,255,255,.5)}
+.nc-hd{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.nc-app{width:20px;height:20px;border-radius:5px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.nc-src{font-size:11px;font-weight:500;color:var(--t1)}
+.nc-time{font-size:10px;color:var(--t3);margin-left:auto}
+.nc-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.nc-body{font-size:11px;color:var(--t2);line-height:1.45}
+
+/* App screens */
+.app-hd{background:var(--blue);padding:10px 14px 9px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.app-hd-title{font-size:13px;font-weight:500;color:#fff;flex:1}
+.hd-count{background:rgba(255,255,255,.2);border-radius:8px;padding:2px 7px;font-size:10px;color:#fff}
+.app-hd-back{font-size:11px;color:rgba(255,255,255,.7);cursor:pointer}
+
+/* Action list */
+.action-list{flex:1;overflow:hidden}
+.ai{padding:11px 14px;border-bottom:0.5px solid var(--b3)}
+.ai-top{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.sev{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
+.sev.c{background:var(--red-bg);color:var(--red-t)}
+.sev.w{background:var(--amber-bg);color:var(--amber-t)}
+.ai-title{font-size:12px;font-weight:500;color:var(--t1)}
+.ai-tag{font-size:10px;color:var(--blue);background:var(--blue-bg);padding:1px 5px;border-radius:3px;margin-left:auto}
+.ai-body{font-size:11px;color:var(--t2);line-height:1.45;margin-bottom:8px}
+.ai-btns{display:flex;gap:5px}
+.aib{flex:1;font-size:11px;padding:6px 4px;border-radius:8px;border:none;font-weight:500;cursor:pointer;text-align:center;transition:opacity .15s}
+.aib:active{opacity:.75}
+.aib.ok{background:var(--green-bg);color:var(--green-t)}
+.aib.deny{background:var(--red-bg);color:var(--red-t)}
+.aib.defer{background:var(--bg3);color:var(--t2)}
+
+/* Detail screen */
+.det-hd{display:flex;align-items:center;gap:8px;padding:10px 13px 9px;border-bottom:0.5px solid var(--b3);flex-shrink:0}
+.back-btn{font-size:11px;color:var(--blue);cursor:pointer;padding:2px 0}
+.det-title{font-size:12px;font-weight:500;color:var(--t1)}
+.det-body{padding:10px 13px;overflow-y:auto;flex:1}
+.det-sect{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 5px}
+.det-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--b3)}
+.det-key{font-size:11px;color:var(--t2)}
+.det-val{font-size:11px;font-weight:500;color:var(--t1)}
+.det-val.red{color:var(--red)}.det-val.amber{color:var(--amber)}.det-val.green{color:var(--green)}
+.opt-card{border:0.5px solid var(--b3);border-radius:9px;padding:9px 10px;margin-bottom:7px;background:var(--bg2)}
+.opt-lbl{font-size:10px;font-weight:500;color:var(--t3);margin-bottom:3px}
+.opt-title{font-size:11px;font-weight:500;color:var(--t1);margin-bottom:3px}
+.opt-body{font-size:11px;color:var(--t2);line-height:1.45;margin-bottom:7px}
+.opt-btns{display:flex;gap:5px}
+.ob{flex:1;font-size:10px;padding:5px;border-radius:6px;border:none;font-weight:500;cursor:pointer}
+.ob.acc{background:var(--green-bg);color:var(--green-t)}
+.ob.den{background:var(--red-bg);color:var(--red-t)}
+
+/* Confirmation toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--t1);color:var(--bg1);font-size:12px;padding:8px 18px;border-radius:99px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1}
+
+/* Explainer strip at bottom */
+.explainer{max-width:860px;margin:0 auto 32px;padding:0 20px}
+.exp-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:8px}
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.exp-card{background:var(--bg1);border:0.5px solid var(--b3);border-radius:10px;padding:12px}
+.exp-n{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.exp-t{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:4px}
+.exp-d{font-size:11px;color:var(--t2);line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <span class="nav-logo">Package<span>Engineer</span></span>
+  <div class="spacer"></div>
+  <a href="index.html" class="nav-btn">← All demos</a>
+  <a href="desktop-workstation.html" class="nav-btn" style="margin-left:4px">Desktop →</a>
+</div>
+
+<div class="outer">
+
+  <!-- Phone 1: Lock screen -->
+  <div class="phone-col">
+    <div class="phone-label">Lock screen — push notification</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="sbar">
+          <span class="sbar-time">09:41</span>
+          <div class="sbar-icons"><div class="sig"></div><div class="sig"></div><div class="sig"></div></div>
+        </div>
+        <div class="lock-bg">
+          <div class="lock-time">
+            <div class="big">09:41</div>
+            <div class="day">Wednesday 25 March</div>
+          </div>
+          <div class="notif-card">
+            <div class="nc-hd">
+              <div class="nc-app">PE</div>
+              <span class="nc-src">Package Engineer</span>
+              <span class="nc-time">now</span>
+            </div>
+            <div class="nc-title">Critical — PSV-2301 datasheet mismatch</div>
+            <div class="nc-body">MAWP 152 bar vs spec 165 bar. Agent proposes NCR to vendor. OK to proceed?</div>
+          </div>
+          <div class="notif-card" style="opacity:.75">
+            <div class="nc-hd">
+              <div class="nc-app">PE</div>
+              <span class="nc-src">Package Engineer</span>
+              <span class="nc-time">3m</span>
+            </div>
+            <div class="nc-title">PMP-1140 — CE cert still missing</div>
+            <div class="nc-body">Day 4 overdue. Escalate to vendor procurement?</div>
+          </div>
+          <div class="notif-card" style="opacity:.5">
+            <div class="nc-hd">
+              <div class="nc-app">PE</div>
+              <span class="nc-src">Package Engineer</span>
+              <span class="nc-time">12m</span>
+            </div>
+            <div class="nc-title">HX-0420 — IMF class mismatch</div>
+            <div class="nc-body">Shell-Tube vs Plate-Frame. Review deviation?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone 2: Action queue -->
+  <div class="phone-col">
+    <div class="phone-label">Action queue — OK / Deny / Defer</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="sbar"><span class="sbar-time">09:41</span><div class="sbar-icons"><div class="sig"></div><div class="sig"></div><div class="sig"></div></div></div>
+        <div class="app-hd">
+          <span class="app-hd-title">Needs action</span>
+          <span class="hd-count">4 open</span>
+        </div>
+        <div class="action-list">
+          <div class="ai">
+            <div class="ai-top">
+              <span class="sev c">Critical</span>
+              <span class="ai-title">Datasheet mismatch</span>
+              <span class="ai-tag">PSV-2301</span>
+            </div>
+            <div class="ai-body">MAWP in vendor doc (152 bar) deviates from spec (165 bar). Agent recommends issuing NCR.</div>
+            <div class="ai-btns">
+              <div class="aib ok" onclick="toast('NCR approved — agent will issue to vendor')">OK ✓</div>
+              <div class="aib deny" onclick="toast('Rejected — returned to queue')">Deny</div>
+              <div class="aib defer" onclick="toast('Deferred 24h')">Later</div>
+            </div>
+          </div>
+          <div class="ai">
+            <div class="ai-top">
+              <span class="sev c">Critical</span>
+              <span class="ai-title">Missing CE cert</span>
+              <span class="ai-tag">PMP-1140</span>
+            </div>
+            <div class="ai-body">ATEX Declaration of Conformity not received. Day 4 overdue. Escalate to procurement?</div>
+            <div class="ai-btns">
+              <div class="aib ok" onclick="toast('Escalated — procurement notified')">OK ✓</div>
+              <div class="aib deny" onclick="toast('Rejected')">Deny</div>
+              <div class="aib defer" onclick="toast('Deferred 24h')">Later</div>
+            </div>
+          </div>
+          <div class="ai">
+            <div class="ai-top">
+              <span class="sev w">Warning</span>
+              <span class="ai-title">IMF class mismatch</span>
+              <span class="ai-tag">HX-0420</span>
+            </div>
+            <div class="ai-body">Vendor submitted as Shell-Tube. Spec requires Plate-Frame. Flag for re-classification?</div>
+            <div class="ai-btns">
+              <div class="aib ok" onclick="toast('Flagged — deviation raised')">OK ✓</div>
+              <div class="aib deny" onclick="toast('Rejected')">Deny</div>
+              <div class="aib defer" onclick="toast('Deferred')">Later</div>
+            </div>
+          </div>
+          <div class="ai">
+            <div class="ai-top">
+              <span class="sev w">Warning</span>
+              <span class="ai-title">Vendor revision</span>
+              <span class="ai-tag">VLV-0887</span>
+            </div>
+            <div class="ai-body">Datasheet v2.1 received — 3 changed attributes vs accepted v2.0.</div>
+            <div class="ai-btns">
+              <div class="aib ok" onclick="toast('Changes accepted')">OK ✓</div>
+              <div class="aib deny" onclick="toast('Rejected — returned for review')">Deny</div>
+              <div class="aib defer" onclick="toast('Deferred')">Later</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone 3: Detail / proposals -->
+  <div class="phone-col">
+    <div class="phone-label">Proposal detail — tap through</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="sbar"><span class="sbar-time">09:41</span><div class="sbar-icons"><div class="sig"></div><div class="sig"></div><div class="sig"></div></div></div>
+        <div class="det-hd">
+          <span class="back-btn">← Back</span>
+          <span class="det-title">PSV-2301 · MAWP mismatch</span>
+        </div>
+        <div class="det-body">
+          <div class="det-sect">Deviation summary</div>
+          <div class="det-row"><span class="det-key">Attribute</span><span class="det-val">pressure_design_max</span></div>
+          <div class="det-row"><span class="det-key">Spec value</span><span class="det-val">165 bar</span></div>
+          <div class="det-row"><span class="det-key">Vendor value</span><span class="det-val red">152 bar</span></div>
+          <div class="det-row"><span class="det-key">IMF type</span><span class="det-val" style="color:var(--purple)">Valve-Safety</span></div>
+          <div class="det-row"><span class="det-key">PO</span><span class="det-val">3842</span></div>
+          <div class="det-row"><span class="det-key">Deviation</span><span class="det-val red">DEV-0041</span></div>
+
+          <div class="det-sect">Agent proposals</div>
+
+          <div class="opt-card">
+            <div class="opt-lbl">Option A · High confidence</div>
+            <div class="opt-title">Issue NCR to vendor</div>
+            <div class="opt-body">Request revised datasheet confirming MAWP ≥ 165 bar per spec §4.2.1. Est. 5–7 day vendor turnaround.</div>
+            <div class="opt-btns">
+              <button class="ob acc" onclick="toast('NCR approved and issued')">Accept ✓</button>
+              <button class="ob den" onclick="toast('Option A rejected')">Reject ✗</button>
+            </div>
+          </div>
+
+          <div class="opt-card">
+            <div class="opt-lbl">Option B · Med confidence</div>
+            <div class="opt-title">Raise formal deviation</div>
+            <div class="opt-body">Accept 152 bar as-built. Deviation note raised — requires discipline lead sign-off.</div>
+            <div class="opt-btns">
+              <button class="ob acc" onclick="toast('Deviation raised — lead notified')">Accept ✓</button>
+              <button class="ob den" onclick="toast('Option B rejected')">Reject ✗</button>
+            </div>
+          </div>
+
+          <div class="opt-card">
+            <div class="opt-lbl">Option C · Low confidence</div>
+            <div class="opt-title">Re-evaluate process spec</div>
+            <div class="opt-body">Evaluate whether 152 bar is sufficient. Requires process engineer review and hazard study update.</div>
+            <div class="opt-btns">
+              <button class="ob acc" onclick="toast('Review task created')">Accept ✓</button>
+              <button class="ob den" onclick="toast('Option C rejected')">Reject ✗</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /outer -->
+
+<div class="explainer">
+  <div class="exp-title">Mobile surface — design logic</div>
+  <div class="exp-grid">
+    <div class="exp-card">
+      <div class="exp-n">Interrupt model</div>
+      <div class="exp-t">Agent pushes, human gates</div>
+      <div class="exp-d">Agents find and prioritize. Push arrives on lock screen with one-sentence context. Human approves or denies without opening the full workstation.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-n">Three decisions</div>
+      <div class="exp-t">OK · Deny · Defer</div>
+      <div class="exp-d">OK executes the agent's top proposal. Deny returns the item to the queue for human rework. Defer pushes it 24h and re-scores priority.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-n">Proposal detail</div>
+      <div class="exp-t">Tap through for context</div>
+      <div class="exp-d">Each action links to ranked resolution options with confidence scores. All data from Cognite + IMF attribute validation — no re-entry needed.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-n">Desktop link</div>
+      <div class="exp-t">Deep work stays on desktop</div>
+      <div class="exp-d">Mobile never shows raw data tables, P&IDs or graph views. Those open on the desktop workstation. Mobile is purely the interrupt and approval layer.</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-el" class="toast"></div>
+
+<script>
+function toast(msg){
+  const el=document.getElementById('toast-el');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
