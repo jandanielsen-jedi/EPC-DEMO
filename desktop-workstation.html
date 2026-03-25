@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Desktop Workstation — Package Engineer</title>
+<title>Package Engineer Workstation — NCS-1A</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,458 +18,703 @@
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   font-size:13px;color:var(--t1);
 }
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
-    --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
-    --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
-    --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
-    --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
-    --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
-    --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
-    --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
-  }
-}
+@media(prefers-color-scheme:dark){:root{
+  --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+  --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+  --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+  --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+  --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+  --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+  --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+  --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+}}
 html,body{height:100%;overflow:hidden;background:var(--bg3)}
 
-/* topbar */
+/* ── topbar ── */
 .topbar{height:48px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
-.logo{font-size:14px;font-weight:600;letter-spacing:-.02em}
-.logo span{color:var(--blue)}
-.tb-sep{color:var(--b2)}
-.tb-sub{font-size:11px;color:var(--t3)}
-.spacer{flex:1}
+.logo{font-size:14px;font-weight:600;letter-spacing:-.02em}.logo span{color:var(--blue)}
+.tb-sep{color:var(--b2);margin:0 2px}.tb-sub{font-size:11px;color:var(--t3)}.spacer{flex:1}
 .tb-pill{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500}
-.tb-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-btn{font-size:12px;padding:5px 11px;border-radius:6px;border:0.5px solid var(--b2);background:var(--bg2);color:var(--t2);cursor:pointer}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* layout */
+/* ── layout ── */
 .workspace{display:flex;height:calc(100vh - 48px);overflow:hidden}
-.left{width:248px;flex-shrink:0;background:var(--bg1);border-right:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
+.left{width:256px;flex-shrink:0;background:var(--bg1);border-right:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
 .centre{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg3)}
-.right{width:272px;flex-shrink:0;background:var(--bg1);border-left:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
+.right{width:280px;flex-shrink:0;background:var(--bg1);border-left:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
 
-/* panel headers */
+/* ── panel header ── */
 .ph{padding:10px 12px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0}
 .ph-title{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
 .ph-sub{font-size:11px;color:var(--t2);margin-top:2px}
+.ph-row{display:flex;align-items:center;gap:8px}
 
-/* ── LEFT: system status ── */
-.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b3);border-bottom:0.5px solid var(--b3)}
-.sys-cell{background:var(--bg1);padding:8px 12px}
-.sys-label{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
-.sys-val{font-size:16px;font-weight:500;margin-top:1px}
-.sys-unit{font-size:10px;color:var(--t3);font-weight:400}
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b3);border-bottom:0.5px solid var(--b3);flex-shrink:0}
+.kpi-cell{background:var(--bg1);padding:9px 12px}
+.kpi-label{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.kpi-val{font-size:20px;font-weight:500;line-height:1}
+.kpi-sub{font-size:10px;color:var(--t3);margin-top:2px}
 
-/* action queue */
+/* ── action queue ── */
 .aq-scroll{flex:1;overflow-y:auto;padding:6px}
-.aq-item{border:0.5px solid var(--b3);border-radius:8px;padding:10px;margin-bottom:6px;background:var(--bg2);cursor:pointer;transition:border-color .15s}
-.aq-item:hover{border-color:var(--b2)}
-.aq-item.urgent{border-color:rgba(226,75,74,.35);background:var(--red-bg)}
-.aq-item.pending{border-color:rgba(186,117,23,.3);background:var(--amber-bg)}
-.aq-header{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.aq-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.aq-title{font-size:12px;font-weight:500;color:var(--t1);flex:1;line-height:1.3}
-.aq-time{font-size:10px;color:var(--t3)}
-.aq-desc{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
-.aq-btns{display:flex;gap:5px}
-.aq-btn{flex:1;font-size:11px;padding:4px 0;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
-.aq-btn.approve{background:var(--green-bg);border-color:rgba(99,153,34,.3);color:var(--green-t)}
-.aq-btn.deny{background:var(--red-bg);border-color:rgba(226,75,74,.3);color:var(--red-t)}
-.aq-btn.defer{background:var(--bg2);color:var(--t3)}
+.aq-card{border:0.5px solid var(--b3);border-radius:8px;padding:9px 10px;margin-bottom:5px;background:var(--bg2);cursor:pointer;transition:border-color .12s}
+.aq-card:hover{border-color:var(--b2)}
+.aq-card.crit{border-color:rgba(226,75,74,.4);background:var(--red-bg)}
+.aq-card.warn{border-color:rgba(186,117,23,.35);background:var(--amber-bg)}
+.aq-card.info{border-color:rgba(24,95,165,.25);background:var(--blue-bg)}
+.aq-top{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px}
+.aq-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.aq-title{font-size:12px;font-weight:500;color:var(--t1);flex:1;line-height:1.35}
+.aq-meta{font-size:10px;color:var(--t3);margin-bottom:4px}
+.aq-desc{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:6px}
+.aq-btns{display:flex;gap:4px}
+.aqb{flex:1;font-size:10px;padding:4px;border-radius:4px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
+.aqb.ncr{background:var(--red-bg);border-color:rgba(226,75,74,.3);color:var(--red-t)}
+.aqb.resolve{background:var(--green-bg);border-color:rgba(99,153,34,.3);color:var(--green-t)}
+.aqb.assign{background:var(--blue-bg);border-color:rgba(24,95,165,.25);color:var(--blue-t)}
 
-/* ── CENTRE ── */
-.centre-tabs{background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;padding:0 16px;flex-shrink:0}
-.ctab{font-size:12px;padding:10px 12px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px}
-.ctab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+/* ── centre header ── */
+.c-header{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:10px 16px;flex-shrink:0}
+.c-title-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.c-title{font-size:15px;font-weight:600;color:var(--t1);letter-spacing:-.01em}
+.c-meta{font-size:11px;color:var(--t3)}
+.view-switcher{display:flex;gap:4px}
+.vs-btn{font-size:11px;padding:4px 12px;border-radius:5px;border:0.5px solid var(--b3);background:var(--bg2);color:var(--t2);cursor:pointer;font-weight:500}
+.vs-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-.pid-area{flex:1;overflow:hidden;position:relative}
-.pid-area svg{width:100%;height:100%}
+/* ── job cards ── */
+.job-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--b3);background:var(--bg1);flex-shrink:0}
+.jc{border:0.5px solid var(--b3);border-radius:8px;padding:10px 11px;cursor:pointer;transition:border-color .12s,transform .1s}
+.jc:hover{border-color:var(--b2);transform:translateY(-1px)}
+.jc.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.jc-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.jc-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.jc-name{font-size:11px;font-weight:500;color:var(--t1);line-height:1.3}
+.jc-count{font-size:22px;font-weight:500;line-height:1;margin-bottom:2px}
+.jc-sub{font-size:10px;color:var(--t3)}
+.jc-bar{height:3px;background:var(--b3);border-radius:2px;overflow:hidden;margin-top:7px}
+.jc-fill{height:100%;border-radius:2px}
 
-/* completeness strip */
-.completeness{height:36px;background:var(--bg1);border-top:0.5px solid var(--b3);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
-.cs-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.cs-bar-wrap{flex:1;height:6px;background:var(--b3);border-radius:3px;overflow:hidden}
-.cs-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green) 0%,var(--blue) 100%);transition:width .4s}
-.cs-pct{font-size:11px;font-weight:600;color:var(--t1);white-space:nowrap}
-.cs-chips{display:flex;gap:6px}
-.cs-chip{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:500;white-space:nowrap}
+/* ── findings tabs ── */
+.ftabs{background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;padding:0 14px;flex-shrink:0}
+.ftab{font-size:12px;padding:8px 11px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;white-space:nowrap}
+.ftab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
 
-/* ── RIGHT ── */
-.run-section{padding:10px 12px;border-bottom:0.5px solid var(--b3)}
-.run-header{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.run-title{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;flex:1}
-.run-badge{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500}
+/* ── findings list ── */
+.findings-scroll{flex:1;overflow-y:auto;padding:8px 12px}
+.finding-row{display:flex;align-items:flex-start;gap:9px;padding:9px 10px;background:var(--bg1);border:0.5px solid var(--b3);border-radius:8px;margin-bottom:5px;cursor:pointer;transition:border-color .12s}
+.finding-row:hover{border-color:var(--b2)}
+.finding-row.selected{border-color:var(--blue)}
+.fr-sev{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0}
+.fr-body{flex:1;min-width:0}
+.fr-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.fr-id{font-size:10px;font-family:monospace;color:var(--t3)}
+.fr-title{font-size:12px;font-weight:500;color:var(--t1);flex:1;line-height:1.3}
+.fr-detail{font-size:11px;color:var(--t2);line-height:1.45;margin-bottom:5px}
+.fr-pills{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.fr-pill{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:500}
+.fr-actions{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.fr-btn{font-size:10px;padding:3px 9px;border-radius:4px;border:0.5px solid var(--b2);background:var(--bg2);color:var(--t2);cursor:pointer;font-weight:500;white-space:nowrap}
+.fr-btn.ncr{background:var(--red-bg);border-color:rgba(226,75,74,.3);color:var(--red-t)}
+.fr-btn.res{background:var(--green-bg);border-color:rgba(99,153,34,.3);color:var(--green-t)}
+.fr-rule{font-size:10px;color:var(--t3);font-family:monospace}
 
-.param-row{display:flex;align-items:center;margin-bottom:5px}
-.param-label{font-size:11px;color:var(--t2);flex:1}
-.param-val{font-size:12px;font-weight:500;color:var(--t1)}
-.param-unit{font-size:10px;color:var(--t3);margin-left:2px}
+/* ── right panel ── */
+.r-scroll{flex:1;overflow-y:auto;padding:8px 10px}
+.r-section{margin-bottom:12px}
+.r-sec-title{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
 
-.run-btn-row{display:flex;gap:6px;margin-top:10px}
-.rbtn{flex:1;padding:7px;border-radius:6px;font-size:12px;font-weight:500;border:0.5px solid var(--b2);cursor:pointer;text-align:center}
-.rbtn.start{background:var(--blue);color:#fff;border-color:var(--blue)}
-.rbtn.stop{background:var(--red-bg);color:var(--red-t);border-color:rgba(226,75,74,.3)}
-.rbtn.hold{background:var(--amber-bg);color:var(--amber-t);border-color:rgba(186,117,23,.25)}
+/* validation agent progress */
+.val-job{background:var(--bg2);border:0.5px solid var(--b3);border-radius:8px;padding:9px 10px;margin-bottom:5px}
+.vj-top{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.vj-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.vj-name{font-size:12px;font-weight:500;color:var(--t1);flex:1}
+.vj-pct{font-size:11px;font-weight:600;color:var(--t1)}
+.vj-bar{height:4px;background:var(--b3);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.vj-fill{height:100%;border-radius:2px;transition:width .4s}
+.vj-meta{font-size:10px;color:var(--t3)}
 
-/* proposals */
-.prop-scroll{flex:1;overflow-y:auto;padding:8px}
-.prop-item{border:0.5px solid var(--b3);border-radius:8px;padding:10px;margin-bottom:6px;background:var(--bg2)}
-.prop-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px}
-.prop-tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
-.prop-title{font-size:12px;font-weight:500;color:var(--t1);line-height:1.3;flex:1}
-.prop-body{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
-.prop-delta{font-size:11px;font-weight:500;color:var(--green)}
-.prop-btns{display:flex;gap:5px}
-.pbtn{flex:1;font-size:11px;padding:4px;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
-.pbtn.apply{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* standards findings */
+.sf-item{border:0.5px solid var(--b3);border-radius:7px;padding:8px 10px;margin-bottom:5px;background:var(--bg2)}
+.sf-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:4px}
+.sf-badge{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;flex-shrink:0}
+.sf-title{font-size:12px;font-weight:500;color:var(--t1);flex:1;line-height:1.3}
+.sf-body{font-size:11px;color:var(--t2);line-height:1.45;margin-bottom:6px}
+.sf-ref{font-size:10px;color:var(--t3);font-family:monospace}
+.sf-btns{display:flex;gap:4px;margin-top:5px}
+.sfb{flex:1;font-size:10px;padding:4px;border-radius:4px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
+.sfb.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-/* scrollbar */
+/* discipline assignment queue */
+.disc-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border:0.5px solid var(--b3);border-radius:7px;margin-bottom:4px;background:var(--bg2)}
+.disc-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.disc-body{flex:1;min-width:0}
+.disc-name{font-size:11px;font-weight:500;color:var(--t1)}
+.disc-sub{font-size:10px;color:var(--t3)}
+.disc-count{font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px}
+.disc-send{font-size:10px;padding:3px 9px;border-radius:4px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:500}
+
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
 </style>
 </head>
 <body>
 
+<!-- ── topbar ── -->
 <div class="topbar">
   <div class="logo">Package<span>Engineer</span></div>
   <span class="tb-sep">/</span>
   <span class="tb-sub">Workstation</span>
   <div class="spacer"></div>
-  <div class="tb-status"><div class="live-dot"></div> Live · NCS-1A</div>
+  <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)"><div class="live-dot"></div>Validating · NCS-1A</div>
   <span class="tb-pill" style="background:var(--blue-bg);color:var(--blue-t)">Compression train 2</span>
-  <span class="tb-pill" style="background:var(--amber-bg);color:var(--amber-t)">3 actions pending</span>
+  <span class="tb-pill" style="background:var(--red-bg);color:var(--red-t)">47 findings open</span>
+  <button class="tb-btn">Export NCR</button>
+  <button class="tb-btn" style="background:var(--blue);color:#fff;border-color:var(--blue)">Run validation</button>
 </div>
 
 <div class="workspace">
 
-  <!-- ── LEFT ── -->
-  <div class="left">
-    <div class="ph">
-      <div class="ph-title">Command centre</div>
-      <div class="ph-sub">C-4420A · Gas Compressor</div>
+<!-- ══════════════════════════════════════
+     LEFT — Command centre + Action queue
+═══════════════════════════════════════════ -->
+<div class="left">
+
+  <div class="ph">
+    <div class="ph-title">Command centre</div>
+    <div class="ph-sub">NCS-1A · Package validation run #14</div>
+  </div>
+
+  <!-- KPI strip -->
+  <div class="kpi-strip">
+    <div class="kpi-cell">
+      <div class="kpi-label">Open findings</div>
+      <div class="kpi-val" style="color:var(--red)">47</div>
+      <div class="kpi-sub">↑8 since last run</div>
     </div>
-
-    <div class="sys-grid">
-      <div class="sys-cell">
-        <div class="sys-label">Suction P</div>
-        <div class="sys-val" style="color:var(--blue)">42.3 <span class="sys-unit">bar</span></div>
-      </div>
-      <div class="sys-cell">
-        <div class="sys-label">Discharge P</div>
-        <div class="sys-val">138.7 <span class="sys-unit">bar</span></div>
-      </div>
-      <div class="sys-cell">
-        <div class="sys-label">Speed</div>
-        <div class="sys-val">8 420 <span class="sys-unit">rpm</span></div>
-      </div>
-      <div class="sys-cell">
-        <div class="sys-label">Temp out</div>
-        <div class="sys-val" style="color:var(--amber)">94 <span class="sys-unit">°C</span></div>
-      </div>
-      <div class="sys-cell">
-        <div class="sys-label">Flow</div>
-        <div class="sys-val">1 820 <span class="sys-unit">Nm³/h</span></div>
-      </div>
-      <div class="sys-cell">
-        <div class="sys-label">Vibration</div>
-        <div class="sys-val" style="color:var(--green)">2.1 <span class="sys-unit">mm/s</span></div>
-      </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Interface gaps</div>
+      <div class="kpi-val" style="color:var(--amber)">18</div>
+      <div class="kpi-sub">4 disciplines</div>
     </div>
-
-    <div class="ph" style="margin-top:0">
-      <div class="ph-title">Action queue</div>
-      <div class="ph-sub">3 pending · 1 urgent</div>
-    </div>
-
-    <div class="aq-scroll">
-
-      <div class="aq-item urgent">
-        <div class="aq-header">
-          <div class="aq-icon" style="background:var(--red-bg);color:var(--red-t)">!</div>
-          <div class="aq-title">High discharge temperature</div>
-          <div class="aq-time">0m ago</div>
-        </div>
-        <div class="aq-desc">Discharge temp reached 94°C — limit 90°C. Agent proposes reducing speed by 180 rpm and opening bypass valve XV-4421 by 8%.</div>
-        <div class="aq-btns">
-          <div class="aq-btn approve">Approve</div>
-          <div class="aq-btn deny">Deny</div>
-          <div class="aq-btn defer">Defer</div>
-        </div>
-      </div>
-
-      <div class="aq-item pending">
-        <div class="aq-header">
-          <div class="aq-icon" style="background:var(--amber-bg);color:var(--amber-t)">~</div>
-          <div class="aq-title">Anti-surge recycle adjustment</div>
-          <div class="aq-time">4m ago</div>
-        </div>
-        <div class="aq-desc">Surge margin at 8.3% — below 10% target. Increase recycle valve FV-4403 from 12% to 19% opening.</div>
-        <div class="aq-btns">
-          <div class="aq-btn approve">Approve</div>
-          <div class="aq-btn deny">Deny</div>
-          <div class="aq-btn defer">Defer</div>
-        </div>
-      </div>
-
-      <div class="aq-item">
-        <div class="aq-header">
-          <div class="aq-icon" style="background:var(--blue-bg);color:var(--blue-t)">i</div>
-          <div class="aq-title">Scheduled lube oil sample</div>
-          <div class="aq-time">12m ago</div>
-        </div>
-        <div class="aq-desc">72-hour lube oil sample interval reached. Notify field technician to collect sample from drain point LP-4420-03.</div>
-        <div class="aq-btns">
-          <div class="aq-btn approve">Approve</div>
-          <div class="aq-btn deny">Deny</div>
-          <div class="aq-btn defer">Defer</div>
-        </div>
-      </div>
-
+    <div class="kpi-cell">
+      <div class="kpi-label">Tag compliance</div>
+      <div class="kpi-val" style="color:var(--blue)">62%</div>
+      <div class="kpi-sub">↑4% from run #13</div>
     </div>
   </div>
 
-  <!-- ── CENTRE ── -->
-  <div class="centre">
-    <div class="centre-tabs">
-      <div class="ctab active">P&amp;ID</div>
-      <div class="ctab">3D Model</div>
-      <div class="ctab">Knowledge graph</div>
-      <div class="ctab">Documents</div>
+  <div class="ph">
+    <div class="ph-row">
+      <div class="ph-title" style="flex:1">Action queue</div>
+      <span style="font-size:10px;color:var(--t3)">6 items · 2 critical</span>
+    </div>
+  </div>
+
+  <div class="aq-scroll">
+
+    <div class="aq-card crit">
+      <div class="aq-top">
+        <div class="aq-dot" style="background:var(--red)"></div>
+        <div class="aq-title">EX zone mismatch — 4 instruments</div>
+      </div>
+      <div class="aq-meta">TAG: PT-4420-001/002, TT-4420-003/004 · ATEX Zone 1</div>
+      <div class="aq-desc">Instruments specified Zone 2 protection; P&ID zone boundary shows Zone 1. ATEX Dir. 2014/34/EU non-conformance. Must resolve before IFC.</div>
+      <div class="aq-btns">
+        <div class="aqb ncr">Raise NCR</div>
+        <div class="aqb assign">Assign EL</div>
+        <div class="aqb">Defer</div>
+      </div>
     </div>
 
-    <div class="pid-area">
-      <svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg" style="background:var(--bg2)">
-        <defs>
-          <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L6,3 z" fill="var(--t3)"/>
-          </marker>
-        </defs>
-
-        <!-- grid lines -->
-        <g stroke="var(--b3)" stroke-width="0.5">
-          <line x1="0" y1="120" x2="900" y2="120"/>
-          <line x1="0" y1="240" x2="900" y2="240"/>
-          <line x1="0" y1="360" x2="900" y2="360"/>
-          <line x1="180" y1="0" x2="180" y2="480"/>
-          <line x1="360" y1="0" x2="360" y2="480"/>
-          <line x1="540" y1="0" x2="540" y2="480"/>
-          <line x1="720" y1="0" x2="720" y2="480"/>
-        </g>
-
-        <!-- ── Inlet separator V-4401 ── -->
-        <rect x="60" y="170" width="90" height="130" rx="45" fill="var(--bg1)" stroke="var(--t2)" stroke-width="1.5"/>
-        <text x="105" y="230" text-anchor="middle" font-size="10" fill="var(--t1)" font-weight="600">V-4401</text>
-        <text x="105" y="243" text-anchor="middle" font-size="9" fill="var(--t3)">Inlet sep.</text>
-        <!-- liquid level indicator -->
-        <rect x="60" y="243" width="90" height="57" rx="0" fill="var(--blue-bg)" opacity=".5" clip-path="url(#v4401clip)"/>
-        <defs><clipPath id="v4401clip"><rect x="60" y="170" width="90" height="130" rx="45"/></clipPath></defs>
-        <line x1="60" y1="243" x2="150" y2="243" stroke="var(--blue)" stroke-width="1" stroke-dasharray="3,2"/>
-        <text x="155" y="246" font-size="9" fill="var(--blue-t)">52%</text>
-
-        <!-- pipe: V-4401 outlet → suction scrubber -->
-        <line x1="150" y1="210" x2="230" y2="210" stroke="var(--t2)" stroke-width="2" marker-end="url(#arr)"/>
-        <rect x="158" y="202" width="30" height="16" rx="3" fill="var(--bg1)" stroke="var(--b3)" stroke-width=".5"/>
-        <text x="173" y="213" text-anchor="middle" font-size="8" fill="var(--t2)">FV-01</text>
-
-        <!-- ── Suction scrubber V-4402 ── -->
-        <rect x="230" y="185" width="60" height="90" rx="8" fill="var(--bg1)" stroke="var(--t2)" stroke-width="1.5"/>
-        <text x="260" y="226" text-anchor="middle" font-size="10" fill="var(--t1)" font-weight="600">V-4402</text>
-        <text x="260" y="238" text-anchor="middle" font-size="9" fill="var(--t3)">Suction</text>
-
-        <!-- pipe: scrubber → compressor -->
-        <line x1="290" y1="220" x2="370" y2="220" stroke="var(--t2)" stroke-width="2.5" marker-end="url(#arr)"/>
-        <!-- suction PT -->
-        <circle cx="320" cy="208" r="9" fill="var(--bg1)" stroke="var(--blue)" stroke-width="1.5"/>
-        <text x="320" y="211" text-anchor="middle" font-size="7" fill="var(--blue-t)" font-weight="700">PT</text>
-        <line x1="320" y1="217" x2="320" y2="220" stroke="var(--blue)" stroke-width="1"/>
-        <text x="320" y="200" text-anchor="middle" font-size="8" fill="var(--t3)">42.3 bar</text>
-
-        <!-- ── Compressor C-4420A ── -->
-        <g transform="translate(370,185)">
-          <!-- body -->
-          <rect x="0" y="0" width="120" height="80" rx="8" fill="var(--blue-bg)" stroke="var(--blue)" stroke-width="2"/>
-          <!-- impeller symbol -->
-          <circle cx="60" cy="40" r="22" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
-          <line x1="60" y1="18" x2="60" y2="62" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
-          <line x1="38" y1="40" x2="82" y2="40" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
-          <line x1="44" y1="24" x2="76" y2="56" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
-          <line x1="76" y1="24" x2="44" y2="56" stroke="var(--blue)" stroke-width="1" opacity=".5"/>
-          <text x="60" y="108" text-anchor="middle" font-size="11" fill="var(--t1)" font-weight="700">C-4420A</text>
-          <text x="60" y="120" text-anchor="middle" font-size="9" fill="var(--t3)">Gas Compressor</text>
-          <!-- speed label -->
-          <text x="60" y="38" text-anchor="middle" font-size="9" fill="var(--blue-t)" font-weight="600">8 420</text>
-          <text x="60" y="49" text-anchor="middle" font-size="8" fill="var(--blue-t)">rpm</text>
-        </g>
-
-        <!-- pipe: compressor → discharge cooler -->
-        <line x1="490" y1="225" x2="590" y2="225" stroke="var(--t2)" stroke-width="2.5" marker-end="url(#arr)"/>
-        <!-- discharge PT -->
-        <circle cx="530" cy="213" r="9" fill="var(--bg1)" stroke="var(--red)" stroke-width="1.5"/>
-        <text x="530" y="216" text-anchor="middle" font-size="7" fill="var(--red-t)" font-weight="700">PT</text>
-        <line x1="530" y1="222" x2="530" y2="225" stroke="var(--red)" stroke-width="1"/>
-        <text x="530" y="205" text-anchor="middle" font-size="8" fill="var(--t3)">138.7 bar</text>
-        <!-- TT -->
-        <circle cx="555" cy="213" r="9" fill="var(--bg1)" stroke="var(--amber)" stroke-width="1.5"/>
-        <text x="555" y="216" text-anchor="middle" font-size="7" fill="var(--amber-t)" font-weight="700">TT</text>
-        <line x1="555" y1="222" x2="555" y2="225" stroke="var(--amber)" stroke-width="1"/>
-        <text x="555" y="205" text-anchor="middle" font-size="8" fill="var(--amber-t)">94°C !</text>
-
-        <!-- ── Discharge cooler E-4401 ── -->
-        <g transform="translate(590,195)">
-          <rect x="0" y="0" width="90" height="55" rx="6" fill="var(--bg1)" stroke="var(--t2)" stroke-width="1.5"/>
-          <!-- heat exchanger symbol lines -->
-          <line x1="0" y1="27" x2="90" y2="27" stroke="var(--t3)" stroke-width="1"/>
-          <line x1="20" y1="10" x2="20" y2="44" stroke="var(--t3)" stroke-width="1"/>
-          <line x1="40" y1="10" x2="40" y2="44" stroke="var(--t3)" stroke-width="1"/>
-          <line x1="60" y1="10" x2="60" y2="44" stroke="var(--t3)" stroke-width="1"/>
-          <text x="45" y="68" text-anchor="middle" font-size="10" fill="var(--t1)" font-weight="600">E-4401</text>
-          <text x="45" y="79" text-anchor="middle" font-size="9" fill="var(--t3)">Disch. cooler</text>
-        </g>
-
-        <!-- pipe: cooler → outlet -->
-        <line x1="680" y1="222" x2="820" y2="222" stroke="var(--t2)" stroke-width="2.5" marker-end="url(#arr)"/>
-        <rect x="726" y="214" width="30" height="16" rx="3" fill="var(--bg1)" stroke="var(--b3)" stroke-width=".5"/>
-        <text x="741" y="225" text-anchor="middle" font-size="8" fill="var(--t2)">XV-01</text>
-        <text x="820" y="226" font-size="10" fill="var(--t3)">→ export</text>
-
-        <!-- ── Anti-surge recycle line ── -->
-        <path d="M 490 210 L 490 140 L 260 140 L 260 185" fill="none" stroke="var(--purple)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-        <rect x="348" y="130" width="40" height="18" rx="3" fill="var(--bg1)" stroke="var(--purple)" stroke-width=".75"/>
-        <text x="368" y="142" text-anchor="middle" font-size="8" fill="var(--purple-t)" font-weight="600">FV-4403</text>
-        <text x="368" y="126" text-anchor="middle" font-size="8" fill="var(--purple-t)">19% open</text>
-        <text x="240" y="135" font-size="9" fill="var(--purple-t)">Anti-surge recycle</text>
-
-        <!-- ── Lube oil system (simplified) ── -->
-        <rect x="400" y="340" width="80" height="50" rx="6" fill="var(--bg1)" stroke="var(--t3)" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="440" y="362" text-anchor="middle" font-size="10" fill="var(--t2)" font-weight="600">LO-SYS</text>
-        <text x="440" y="375" text-anchor="middle" font-size="9" fill="var(--t3)">Lube oil</text>
-        <line x1="440" y1="340" x2="440" y2="265" stroke="var(--t3)" stroke-width="1" stroke-dasharray="3,3"/>
-
-        <!-- labels -->
-        <text x="14" y="20" font-size="10" fill="var(--t3)" font-weight="500">NCS-1A · C-4420A Compressor Train · P&amp;ID Simplified</text>
-        <text x="14" y="34" font-size="9" fill="var(--t3)">Live process values · Updated 09:14:32</text>
-
-        <!-- alarm indicator -->
-        <rect x="820" y="10" width="68" height="22" rx="4" fill="var(--red-bg)" stroke="rgba(226,75,74,.4)" stroke-width=".75"/>
-        <text x="854" y="24" text-anchor="middle" font-size="9" fill="var(--red-t)" font-weight="600">TEMP HIGH</text>
-      </svg>
+    <div class="aq-card crit">
+      <div class="aq-top">
+        <div class="aq-dot" style="background:var(--red)"></div>
+        <div class="aq-title">GTS deviation — flange rating</div>
+      </div>
+      <div class="aq-meta">GTS-PE-101 §4.3 · Flange class 600# vs 900# required</div>
+      <div class="aq-desc">11 flanges on discharge side rated 600# per equipment list. GTS-PE-101 §4.3 mandates 900# for P > 100 bar. Piping lead must review.</div>
+      <div class="aq-btns">
+        <div class="aqb ncr">Raise NCR</div>
+        <div class="aqb assign">Assign PP</div>
+        <div class="aqb">Defer</div>
+      </div>
     </div>
 
-    <div class="completeness">
-      <span class="cs-label">Package completeness</span>
-      <div class="cs-bar-wrap"><div class="cs-bar" style="width:62%"></div></div>
-      <span class="cs-pct">62%</span>
-      <div class="cs-chips">
-        <span class="cs-chip" style="background:var(--green-bg);color:var(--green-t)">Docs 78%</span>
-        <span class="cs-chip" style="background:var(--amber-bg);color:var(--amber-t)">Instr 55%</span>
-        <span class="cs-chip" style="background:var(--red-bg);color:var(--red-t)">P&ID 40%</span>
-        <span class="cs-chip" style="background:var(--blue-bg);color:var(--blue-t)">3D 70%</span>
+    <div class="aq-card warn">
+      <div class="aq-top">
+        <div class="aq-dot" style="background:var(--amber)"></div>
+        <div class="aq-title">P&ID vs equipment list — 7 gaps</div>
+      </div>
+      <div class="aq-meta">PID-4420-003 Rev A · Equipment register v12</div>
+      <div class="aq-desc">7 tags shown on P&ID not found in equipment list. Likely addition in last P&ID revision. Equipment list needs update.</div>
+      <div class="aq-btns">
+        <div class="aqb resolve">Resolve</div>
+        <div class="aqb assign">Assign PE</div>
+        <div class="aqb">Defer</div>
+      </div>
+    </div>
+
+    <div class="aq-card warn">
+      <div class="aq-top">
+        <div class="aq-dot" style="background:var(--amber)"></div>
+        <div class="aq-title">Cable schedule gap — 12 instruments</div>
+      </div>
+      <div class="aq-meta">CS-NCS1A-002 Rev 3 · Instrument list v8</div>
+      <div class="aq-desc">12 instrument tags in loop sheets have no corresponding cable entry in cable schedule. Electrical lead to verify and update.</div>
+      <div class="aq-btns">
+        <div class="aqb resolve">Resolve</div>
+        <div class="aqb assign">Assign EL</div>
+        <div class="aqb">Defer</div>
+      </div>
+    </div>
+
+    <div class="aq-card warn">
+      <div class="aq-top">
+        <div class="aq-dot" style="background:var(--amber)"></div>
+        <div class="aq-title">Instrument loop incomplete — FIC-4403</div>
+      </div>
+      <div class="aq-meta">Loop: FIC-4403 · Anti-surge controller</div>
+      <div class="aq-desc">Loop diagram FIC-4403 missing junction box terminations and cable nos. IEC 61511 safety requirement for SIL-1 function.</div>
+      <div class="aq-btns">
+        <div class="aqb ncr">Raise NCR</div>
+        <div class="aqb assign">Assign IN</div>
+        <div class="aqb">Defer</div>
+      </div>
+    </div>
+
+    <div class="aq-card info">
+      <div class="aq-top">
+        <div class="aq-dot" style="background:var(--blue)"></div>
+        <div class="aq-title">Piping spec break — lube oil system</div>
+      </div>
+      <div class="aq-meta">Line: 3"-LO-4420-001-A1A · Spec A1A vs B2B</div>
+      <div class="aq-desc">Spec break at lube oil cooler outlet not documented on P&ID. Spec A1A (ANSI 150) transitions to B2B (ANSI 300) without break symbol.</div>
+      <div class="aq-btns">
+        <div class="aqb resolve">Resolve</div>
+        <div class="aqb assign">Assign PP</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CENTRE — Validation view
+═══════════════════════════════════════════ -->
+<div class="centre">
+
+  <div class="c-header">
+    <div class="c-title-row">
+      <div class="c-title">NCS-1A · Compression train 2</div>
+      <div class="c-meta">Run #14 · 25 Mar 2026 09:14 · 1 247 tags checked</div>
+      <div class="spacer"></div>
+      <div class="view-switcher">
+        <div class="vs-btn active">Validation</div>
+        <div class="vs-btn">P&amp;ID</div>
+        <div class="vs-btn">3D</div>
+        <div class="vs-btn">Graph</div>
       </div>
     </div>
   </div>
 
-  <!-- ── RIGHT ── -->
-  <div class="right">
-    <div class="ph">
-      <div class="ph-title">Run controls</div>
-      <div class="ph-sub">C-4420A · Auto mode</div>
+  <!-- 4 validation job cards -->
+  <div class="job-cards">
+
+    <div class="jc active">
+      <div class="jc-top">
+        <div class="jc-icon" style="background:var(--red-bg);color:var(--red-t)">T</div>
+        <div class="jc-name">Tag spec validation</div>
+      </div>
+      <div class="jc-count" style="color:var(--red)">14</div>
+      <div class="jc-sub">failures · 8 critical</div>
+      <div class="jc-bar"><div class="jc-fill" style="width:62%;background:var(--red)"></div></div>
     </div>
 
-    <div class="run-section">
-      <div class="run-header">
-        <span class="run-title">Setpoints</span>
-        <span class="run-badge" style="background:var(--green-bg);color:var(--green-t)">Running</span>
+    <div class="jc">
+      <div class="jc-top">
+        <div class="jc-icon" style="background:var(--amber-bg);color:var(--amber-t)">P</div>
+        <div class="jc-name">P&amp;ID consistency</div>
       </div>
-      <div class="param-row">
-        <span class="param-label">Speed setpoint</span>
-        <span class="param-val">8 420 <span class="param-unit">rpm</span></span>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Pressure ratio</span>
-        <span class="param-val">3.28</span>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Surge margin</span>
-        <span class="param-val" style="color:var(--amber)">8.3 <span class="param-unit">%</span></span>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Recycle valve</span>
-        <span class="param-val">12 <span class="param-unit">%</span></span>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Max temp limit</span>
-        <span class="param-val">90 <span class="param-unit">°C</span></span>
-      </div>
-      <div class="run-btn-row">
-        <div class="rbtn hold">Hold</div>
-        <div class="rbtn stop">Stop</div>
-      </div>
+      <div class="jc-count" style="color:var(--amber)">9</div>
+      <div class="jc-sub">mismatches · 3 blocking</div>
+      <div class="jc-bar"><div class="jc-fill" style="width:44%;background:var(--amber)"></div></div>
     </div>
 
-    <div class="ph">
-      <div class="ph-title">Agent proposals</div>
-      <div class="ph-sub">4 active · confidence ≥ 0.82</div>
+    <div class="jc">
+      <div class="jc-top">
+        <div class="jc-icon" style="background:var(--purple-bg);color:var(--purple-t)">A</div>
+        <div class="jc-name">AI standards check</div>
+      </div>
+      <div class="jc-count" style="color:var(--purple)">6</div>
+      <div class="jc-sub">deviations · 2 IEC 60079</div>
+      <div class="jc-bar"><div class="jc-fill" style="width:28%;background:var(--purple)"></div></div>
     </div>
 
-    <div class="prop-scroll">
-
-      <div class="prop-item">
-        <div class="prop-top">
-          <span class="prop-tag" style="background:var(--red-bg);color:var(--red-t)">Urgent</span>
-        </div>
-        <div class="prop-title">Reduce speed + open bypass to lower discharge temp</div>
-        <div class="prop-body">Speed 8 420→8 240 rpm · XV-4421 8% open. Temp forecast: 94→87°C in 3 min.</div>
-        <div class="prop-delta">-7°C · confidence 0.94</div>
-        <div class="prop-btns" style="margin-top:6px">
-          <div class="pbtn apply">Apply</div>
-          <div class="pbtn">Modify</div>
-          <div class="pbtn">Skip</div>
-        </div>
+    <div class="jc">
+      <div class="jc-top">
+        <div class="jc-icon" style="background:var(--blue-bg);color:var(--blue-t)">I</div>
+        <div class="jc-name">Interface completeness</div>
       </div>
-
-      <div class="prop-item">
-        <div class="prop-top">
-          <span class="prop-tag" style="background:var(--amber-bg);color:var(--amber-t)">Recommended</span>
-        </div>
-        <div class="prop-title">Increase recycle valve to restore surge margin</div>
-        <div class="prop-body">FV-4403: 12%→19%. Surge margin forecast: 8.3→11.2%. Minor efficiency impact (~0.4%).</div>
-        <div class="prop-delta">+2.9% surge margin · confidence 0.88</div>
-        <div class="prop-btns" style="margin-top:6px">
-          <div class="pbtn apply">Apply</div>
-          <div class="pbtn">Modify</div>
-          <div class="pbtn">Skip</div>
-        </div>
-      </div>
-
-      <div class="prop-item">
-        <div class="prop-top">
-          <span class="prop-tag" style="background:var(--blue-bg);color:var(--blue-t)">Optimise</span>
-        </div>
-        <div class="prop-title">Schedule lube oil cooler backflush</div>
-        <div class="prop-body">LO cooler efficiency down 6% over last 72h. Backflush during next scheduled hold window (est. 14:00).</div>
-        <div class="prop-btns" style="margin-top:6px">
-          <div class="pbtn apply">Schedule</div>
-          <div class="pbtn">Skip</div>
-        </div>
-      </div>
-
-      <div class="prop-item">
-        <div class="prop-top">
-          <span class="prop-tag" style="background:var(--green-bg);color:var(--green-t)">Routine</span>
-        </div>
-        <div class="prop-title">Update vibration baseline — bearing 3</div>
-        <div class="prop-body">30-day baseline window elapsed. Current RMS 2.1 mm/s is within limits. Update reference to current values.</div>
-        <div class="prop-btns" style="margin-top:6px">
-          <div class="pbtn apply">Update</div>
-          <div class="pbtn">Skip</div>
-        </div>
-      </div>
-
+      <div class="jc-count" style="color:var(--blue)">18</div>
+      <div class="jc-sub">gaps · 4 disciplines</div>
+      <div class="jc-bar"><div class="jc-fill" style="width:38%;background:var(--blue)"></div></div>
     </div>
+
   </div>
 
+  <!-- findings tabs -->
+  <div class="ftabs">
+    <div class="ftab active">Tag spec (14)</div>
+    <div class="ftab">P&amp;ID consistency (9)</div>
+    <div class="ftab">AI standards (6)</div>
+    <div class="ftab">Interface (18)</div>
+    <div class="ftab">All findings (47)</div>
+  </div>
+
+  <!-- findings list -->
+  <div class="findings-scroll">
+
+    <div class="finding-row selected">
+      <div class="fr-sev" style="background:var(--red)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-001</span>
+          <span class="fr-title">EX protection category mismatch — PT-4420-001</span>
+        </div>
+        <div class="fr-detail">Tag specifies Ex d IIC T4 (Zone 2). P&ID zone boundary at this location is Zone 1, requiring Ex d IIC T4 Gb minimum. ATEX 2014/34/EU Art. 13 non-conformance.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--red-bg);color:var(--red-t)">Critical</span>
+          <span class="fr-pill" style="background:var(--blue-bg);color:var(--blue-t)">Electrical</span>
+          <span class="fr-rule">ATEX 2014/34/EU · IEC 60079-14</span>
+          <div class="fr-actions">
+            <div class="fr-btn ncr">NCR</div>
+            <div class="fr-btn res">Resolve</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--red)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-002</span>
+          <span class="fr-title">EX protection category mismatch — PT-4420-002</span>
+        </div>
+        <div class="fr-detail">Same non-conformance as TSV-001. Tag PT-4420-002 shows Zone 2 protection in Zone 1 area. Group finding — 4 tags affected in this zone.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--red-bg);color:var(--red-t)">Critical</span>
+          <span class="fr-pill" style="background:var(--blue-bg);color:var(--blue-t)">Electrical</span>
+          <span class="fr-rule">ATEX 2014/34/EU · IEC 60079-14</span>
+          <div class="fr-actions">
+            <div class="fr-btn ncr">NCR</div>
+            <div class="fr-btn res">Resolve</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--red)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-003</span>
+          <span class="fr-title">Process connection rating insufficient — FV-4403</span>
+        </div>
+        <div class="fr-detail">Anti-surge valve FV-4403 specified with ANSI 600# flanges. GTS-PE-101 §4.3 requires 900# for lines with design pressure > 100 bar. Design P = 138 bar.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--red-bg);color:var(--red-t)">Critical</span>
+          <span class="fr-pill" style="background:var(--green-bg);color:var(--green-t)">Piping</span>
+          <span class="fr-rule">GTS-PE-101 §4.3 · ASME B16.5</span>
+          <div class="fr-actions">
+            <div class="fr-btn ncr">NCR</div>
+            <div class="fr-btn res">Resolve</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--amber)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-004</span>
+          <span class="fr-title">Instrument material class not specified — TT-4420-007</span>
+        </div>
+        <div class="fr-detail">Temperature transmitter TT-4420-007 on discharge line has no material class in tag register. NORSOK I-005 requires material class for all instruments in H2S service.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--amber-bg);color:var(--amber-t)">Major</span>
+          <span class="fr-pill" style="background:var(--purple-bg);color:var(--purple-t)">Instrument</span>
+          <span class="fr-rule">NORSOK I-005 §6.2</span>
+          <div class="fr-actions">
+            <div class="fr-btn ncr">NCR</div>
+            <div class="fr-btn res">Resolve</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--amber)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-005</span>
+          <span class="fr-title">Tag format non-compliant — 3 tags</span>
+        </div>
+        <div class="fr-detail">Tags LT-4420-12, LT-4420-13, PSV-4420-1 do not follow NCS-1A tagging convention (instrument type – system – 3-digit seq). Missing leading zero in sequence.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--amber-bg);color:var(--amber-t)">Major</span>
+          <span class="fr-pill" style="background:var(--purple-bg);color:var(--purple-t)">Instrument</span>
+          <span class="fr-rule">NCS-1A Eng. Std. §2.1 Tag convention</span>
+          <div class="fr-actions">
+            <div class="fr-btn res">Resolve</div>
+            <div class="fr-btn">Assign</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--amber)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-006</span>
+          <span class="fr-title">Valve actuator type missing — XV-4421, XV-4422</span>
+        </div>
+        <div class="fr-detail">Shutdown valves XV-4421 and XV-4422 have no actuator type specified in tag register. Required for SIL verification per IEC 61511 §11.9.3.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--amber-bg);color:var(--amber-t)">Major</span>
+          <span class="fr-pill" style="background:var(--purple-bg);color:var(--purple-t)">Instrument</span>
+          <span class="fr-rule">IEC 61511 §11.9.3 · NORSOK S-001</span>
+          <div class="fr-actions">
+            <div class="fr-btn ncr">NCR</div>
+            <div class="fr-btn res">Resolve</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--blue)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-007</span>
+          <span class="fr-title">Instrument range not specified — 4 pressure tags</span>
+        </div>
+        <div class="fr-detail">PT-4420-005 through 008 missing operating range in datasheet. Range required for procurement specification and loop check procedure.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--blue-bg);color:var(--blue-t)">Minor</span>
+          <span class="fr-pill" style="background:var(--purple-bg);color:var(--purple-t)">Instrument</span>
+          <span class="fr-rule">NCS-1A Instr. Spec. §3.4</span>
+          <div class="fr-actions">
+            <div class="fr-btn res">Resolve</div>
+            <div class="fr-btn">Assign</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding-row">
+      <div class="fr-sev" style="background:var(--blue)"></div>
+      <div class="fr-body">
+        <div class="fr-top">
+          <span class="fr-id">TSV-008</span>
+          <span class="fr-title">Heat trace specification incomplete — 6 tags</span>
+        </div>
+        <div class="fr-detail">Instrument tags with heat trace requirement have no heat trace type or wattage specified. Required by NORSOK E-001 §8.2 for winterisation design.</div>
+        <div class="fr-pills">
+          <span class="fr-pill" style="background:var(--blue-bg);color:var(--blue-t)">Minor</span>
+          <span class="fr-pill" style="background:var(--blue-bg);color:var(--blue-t)">Electrical</span>
+          <span class="fr-rule">NORSOK E-001 §8.2</span>
+          <div class="fr-actions">
+            <div class="fr-btn res">Resolve</div>
+            <div class="fr-btn">Assign</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     RIGHT — Validation agent + standards
+═══════════════════════════════════════════ -->
+<div class="right">
+
+  <div class="ph">
+    <div class="ph-row">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+      <div class="ph-title" style="flex:1;margin-left:6px">Validation agent</div>
+      <span style="font-size:10px;color:var(--t3)">Run #14 active</span>
+    </div>
+    <div class="ph-sub">4 rule sets · 1 247 tags · 09:14</div>
+  </div>
+
+  <div class="r-scroll">
+
+    <!-- validation progress bars -->
+    <div class="r-section">
+      <div class="r-sec-title">Active rule sets</div>
+
+      <div class="val-job">
+        <div class="vj-top">
+          <div class="vj-dot" style="background:var(--green)"></div>
+          <div class="vj-name">GTS-PE-101</div>
+          <div class="vj-pct">100%</div>
+        </div>
+        <div class="vj-bar"><div class="vj-fill" style="width:100%;background:var(--green)"></div></div>
+        <div class="vj-meta">Complete · 11 findings · Piping general technical standard</div>
+      </div>
+
+      <div class="val-job">
+        <div class="vj-top">
+          <div class="vj-dot" style="background:var(--green)"></div>
+          <div class="vj-name">NORSOK suite</div>
+          <div class="vj-pct">100%</div>
+        </div>
+        <div class="vj-bar"><div class="vj-fill" style="width:100%;background:var(--green)"></div></div>
+        <div class="vj-meta">Complete · I-005, S-001, E-001, Z-008 · 19 findings</div>
+      </div>
+
+      <div class="val-job">
+        <div class="vj-top">
+          <div class="vj-dot" style="background:var(--amber)"></div>
+          <div class="vj-name">IEC 60079 — ATEX</div>
+          <div class="vj-pct">78%</div>
+        </div>
+        <div class="vj-bar"><div class="vj-fill" style="width:78%;background:var(--amber)"></div></div>
+        <div class="vj-meta">Running · §14 zone verification in progress · 6 findings so far</div>
+      </div>
+
+      <div class="val-job">
+        <div class="vj-top">
+          <div class="vj-dot" style="background:var(--blue)"></div>
+          <div class="vj-name">ASME B31.3 / B16.5</div>
+          <div class="vj-pct">44%</div>
+        </div>
+        <div class="vj-bar"><div class="vj-fill" style="width:44%;background:var(--blue)"></div></div>
+        <div class="vj-meta">Running · Pressure class & flange ratings · 11 findings so far</div>
+      </div>
+
+    </div>
+
+    <!-- AI standards findings -->
+    <div class="r-section">
+      <div class="r-sec-title">AI standards findings (6)</div>
+
+      <div class="sf-item">
+        <div class="sf-top">
+          <span class="sf-badge" style="background:var(--red-bg);color:var(--red-t)">IEC 60079</span>
+          <div class="sf-title">Zone 1 instruments with Zone 2 protection — 4 tags</div>
+        </div>
+        <div class="sf-body">PT-4420-001/002, TT-4420-003/004 installed in Zone 1 but specified Ex d IIC T4 (Zone 2 only). Zone 1 requires Gb equipment category minimum.</div>
+        <div class="sf-ref">IEC 60079-14:2013 §5.3 — Equipment selection</div>
+        <div class="sf-btns">
+          <div class="sfb pri">Raise NCR</div>
+          <div class="sfb">Assign EL</div>
+        </div>
+      </div>
+
+      <div class="sf-item">
+        <div class="sf-top">
+          <span class="sf-badge" style="background:var(--red-bg);color:var(--red-t)">IEC 61511</span>
+          <div class="sf-title">SIL loop FIC-4403 incomplete documentation</div>
+        </div>
+        <div class="sf-body">Anti-surge SIL-1 loop missing loop diagram completeness. Junction box terminations and cable references absent — required for SIL verification report.</div>
+        <div class="sf-ref">IEC 61511-1:2016 §11.9 — Documentation</div>
+        <div class="sf-btns">
+          <div class="sfb pri">Raise NCR</div>
+          <div class="sfb">Assign IN</div>
+        </div>
+      </div>
+
+      <div class="sf-item">
+        <div class="sf-top">
+          <span class="sf-badge" style="background:var(--amber-bg);color:var(--amber-t)">ASME B16.5</span>
+          <div class="sf-title">Pressure class underspecified — discharge flanges</div>
+        </div>
+        <div class="sf-body">11 flanges on 138 bar discharge circuit specified Class 600 (rated 98.6 bar at 100°C). ASME B16.5 / GTS-PE-101 requires Class 900 (148 bar).</div>
+        <div class="sf-ref">ASME B16.5-2017 Table 2-1.1 / GTS-PE-101 §4.3</div>
+        <div class="sf-btns">
+          <div class="sfb pri">Raise NCR</div>
+          <div class="sfb">Assign PP</div>
+        </div>
+      </div>
+
+      <div class="sf-item">
+        <div class="sf-top">
+          <span class="sf-badge" style="background:var(--amber-bg);color:var(--amber-t)">NORSOK I-005</span>
+          <div class="sf-title">H2S service material class missing — 3 tags</div>
+        </div>
+        <div class="sf-body">TT-4420-007, PT-4420-009, LT-4420-010 in H2S service. NORSOK I-005 §6.2 requires MR0175 compliance and explicit material class. Neither specified.</div>
+        <div class="sf-ref">NORSOK I-005 §6.2 / ISO 15156 (MR0175)</div>
+        <div class="sf-btns">
+          <div class="sfb pri">Raise NCR</div>
+          <div class="sfb">Assign IN</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Discipline assignment queue -->
+    <div class="r-section">
+      <div class="r-sec-title">Discipline assignment queue</div>
+
+      <div class="disc-item">
+        <div class="disc-avatar" style="background:var(--blue-bg);color:var(--blue-t)">EL</div>
+        <div class="disc-body">
+          <div class="disc-name">Electrical lead</div>
+          <div class="disc-sub">L. Eriksen · 18 findings unassigned</div>
+        </div>
+        <div class="disc-count" style="background:var(--red-bg);color:var(--red-t)">18</div>
+        <button class="disc-send">Send</button>
+      </div>
+
+      <div class="disc-item">
+        <div class="disc-avatar" style="background:var(--purple-bg);color:var(--purple-t)">IN</div>
+        <div class="disc-body">
+          <div class="disc-name">Instrument lead</div>
+          <div class="disc-sub">K. Haugen · 14 findings unassigned</div>
+        </div>
+        <div class="disc-count" style="background:var(--amber-bg);color:var(--amber-t)">14</div>
+        <button class="disc-send">Send</button>
+      </div>
+
+      <div class="disc-item">
+        <div class="disc-avatar" style="background:var(--green-bg);color:var(--green-t)">PP</div>
+        <div class="disc-body">
+          <div class="disc-name">Piping lead</div>
+          <div class="disc-sub">T. Olsen · 11 findings unassigned</div>
+        </div>
+        <div class="disc-count" style="background:var(--amber-bg);color:var(--amber-t)">11</div>
+        <button class="disc-send">Send</button>
+      </div>
+
+      <div class="disc-item">
+        <div class="disc-avatar" style="background:var(--amber-bg);color:var(--amber-t)">PE</div>
+        <div class="disc-body">
+          <div class="disc-name">Process lead</div>
+          <div class="disc-sub">M. Thorsen · 4 findings unassigned</div>
+        </div>
+        <div class="disc-count" style="background:var(--blue-bg);color:var(--blue-t)">4</div>
+        <button class="disc-send">Send</button>
+      </div>
+
+      <div style="margin-top:8px">
+        <button style="width:100%;padding:8px;border-radius:7px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:500">Send all assignments</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 </div>
 </body>
 </html>
