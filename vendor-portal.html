@@ -3,593 +3,414 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vendor Portal — EPC Demo</title>
+<title>Vendor Portal — Package Engineer</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
-    --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
-    --b2:rgba(44,44,42,.25);--b3:rgba(44,44,42,.12);
-    --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
-    --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
-    --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
-    --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
-    --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:14px;color:var(--t1);
-  }
-  @media(prefers-color-scheme:dark){
-    :root{
-      --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
-      --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
-      --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
-      --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
-      --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
-      --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
-      --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
-      --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
-    }
-  }
-  html,body{min-height:100%;background:var(--bg3)}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+  --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+  --b2:rgba(44,44,42,.25);--b3:rgba(44,44,42,.12);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+  --green:#639922;--green-bg:#EAF3DE;--green-t:#27500A;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-t:#791F1F;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;color:var(--t1);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+  --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+  --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+  --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+  --green:#639922;--green-bg:#173404;--green-t:#C0DD97;
+  --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+  --red:#E24B4A;--red-bg:#501313;--red-t:#F09595;
+  --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+}}
+html,body{height:100%;overflow:hidden;background:var(--bg3)}
+.topbar{height:48px;background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.logo{font-size:14px;font-weight:600;letter-spacing:-.02em}.logo span{color:var(--blue)}
+.tb-sep{color:var(--b2)}.tb-sub{font-size:11px;color:var(--t3)}.spacer{flex:1}
+.tb-pill{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500}
+.tb-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:0.5px solid var(--b2);background:var(--bg2);color:var(--t2);cursor:pointer}
 
-  /* ── Top bar ── */
-  .topbar{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px}
-  .logo{font-size:15px;font-weight:600;color:var(--t1);letter-spacing:-.02em}
-  .logo span{color:var(--blue)}
-  .topbar-sep{color:var(--b2);margin:0 4px}
-  .topbar-sub{font-size:12px;color:var(--t3)}
-  .spacer{flex:1}
-  .topbar-tag{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--blue-bg);color:var(--blue-t);font-weight:500}
-  .topbar-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:0.5px solid var(--b2);background:var(--bg2);color:var(--t2);cursor:pointer}
+.layout{display:grid;grid-template-columns:244px 1fr 288px;height:calc(100vh - 48px);overflow:hidden}
+.left{background:var(--bg1);border-right:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
+.centre{display:flex;flex-direction:column;overflow:hidden}
+.right{background:var(--bg1);border-left:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
 
-  /* ── Layout ── */
-  .layout{display:grid;grid-template-columns:260px 1fr 320px;height:calc(100vh - 52px);overflow:hidden}
+.ph{padding:10px 12px 8px;border-bottom:0.5px solid var(--b3);flex-shrink:0}
+.ph-title{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.ph-sub{font-size:11px;color:var(--t2);margin-top:2px}
 
-  /* ── Left panel ── */
-  .left{background:var(--bg2);border-right:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
-  .panel-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--b3)}
-  .panel-title{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
-  .panel-count{font-size:11px;color:var(--t3);margin-top:2px}
+/* vendor list */
+.vlist{flex:1;overflow-y:auto;padding:6px}
+.vi{padding:10px;border-radius:8px;cursor:pointer;margin-bottom:2px;border:0.5px solid transparent}
+.vi:hover{background:var(--bg2)}
+.vi.active{background:var(--bg2);border-color:var(--b3)}
+.vi-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.vi-name{font-size:13px;font-weight:500;color:var(--t1);flex:1}
+.vi-tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
+.vi-mr{font-size:11px;color:var(--t2);margin-bottom:4px}
+.vi-bar{height:3px;background:var(--b3);border-radius:2px;overflow:hidden}
+.vi-fill{height:100%;border-radius:2px}
 
-  .search{margin:10px 12px;position:relative}
-  .search input{width:100%;padding:6px 10px 6px 28px;border:0.5px solid var(--b3);border-radius:6px;background:var(--bg1);font-size:12px;color:var(--t1);outline:none}
-  .search input:focus{border-color:var(--blue)}
-  .search-icon{position:absolute;left:8px;top:7px;color:var(--t3);font-size:12px}
+/* centre */
+.ch{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:12px 18px;flex-shrink:0}
+.ch-name{font-size:18px;font-weight:500;color:var(--t1);letter-spacing:-.02em}
+.ch-meta{font-size:12px;color:var(--t2);margin-top:3px}
+.ch-pills{display:flex;gap:6px;margin-top:8px}
+.cpill{font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500}
 
-  .vendor-list{flex:1;overflow-y:auto;padding:6px}
-  .vendor-item{padding:10px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;border:0.5px solid transparent;transition:background .1s}
-  .vendor-item:hover{background:var(--bg1)}
-  .vendor-item.active{background:var(--bg1);border-color:var(--b3)}
-  .vi-row1{display:flex;align-items:center;gap:6px;margin-bottom:3px}
-  .vi-name{font-size:13px;font-weight:500;color:var(--t1);flex:1}
-  .vi-tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
-  .vi-pkg{font-size:11px;color:var(--t2);margin-bottom:3px}
-  .vi-progress{height:3px;background:var(--b3);border-radius:2px;overflow:hidden}
-  .vi-progress-bar{height:100%;border-radius:2px;transition:width .3s}
+.ctabs{background:var(--bg1);border-bottom:0.5px solid var(--b3);display:flex;padding:0 18px;flex-shrink:0}
+.ctab{font-size:12px;padding:9px 12px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px}
+.ctab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
 
-  /* ── Centre panel ── */
-  .centre{display:flex;flex-direction:column;overflow:hidden;background:var(--bg3)}
-  .centre-header{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:14px 20px;display:flex;align-items:flex-start;gap:16px}
-  .vendor-name{font-size:18px;font-weight:500;color:var(--t1);letter-spacing:-.02em}
-  .vendor-meta{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5}
-  .ch-spacer{flex:1}
-  .status-pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-  .spill{font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500}
+.cbody{flex:1;overflow-y:auto;padding:14px 18px}
 
-  .tabs{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:0 20px;display:flex;gap:0}
-  .tab{font-size:12px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px}
-  .tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
-  .tab:hover:not(.active){color:var(--t2)}
+/* kpi strip */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b3);border:0.5px solid var(--b3);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.kpi{background:var(--bg1);padding:11px 13px}
+.kpi-l{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.kpi-v{font-size:20px;font-weight:500;color:var(--t1)}
+.kpi-s{font-size:10px;color:var(--t3);margin-top:2px}
 
-  .centre-body{flex:1;overflow-y:auto;padding:16px 20px}
+/* upload zone */
+.upload-zone{border:1.5px dashed var(--b2);border-radius:10px;padding:20px;text-align:center;background:var(--bg2);margin-bottom:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-bg)}
+.uz-icon{font-size:28px;margin-bottom:6px;opacity:.5}
+.uz-title{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px}
+.uz-sub{font-size:11px;color:var(--t3)}
+.uz-btn{display:inline-block;margin-top:10px;font-size:12px;padding:6px 14px;border-radius:6px;background:var(--blue);color:#fff;font-weight:500;cursor:pointer}
 
-  /* ── Document table ── */
-  .section-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-  .section-title{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
-  .section-n{font-size:11px;color:var(--t3)}
-  .doc-table{background:var(--bg1);border:0.5px solid var(--b3);border-radius:10px;overflow:hidden;margin-bottom:16px}
-  .dt-head{display:grid;grid-template-columns:1fr 90px 100px 110px 80px;padding:8px 14px;border-bottom:0.5px solid var(--b3);background:var(--bg2)}
-  .dt-head span{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
-  .dt-row{display:grid;grid-template-columns:1fr 90px 100px 110px 80px;padding:10px 14px;border-bottom:0.5px solid var(--b3);align-items:center;transition:background .1s;cursor:pointer}
-  .dt-row:last-child{border-bottom:none}
-  .dt-row:hover{background:var(--bg2)}
-  .doc-title{font-size:12px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:6px}
-  .doc-code{font-size:10px;color:var(--t3);font-family:monospace;margin-top:1px}
-  .dt-cell{font-size:12px;color:var(--t2)}
-  .status-badge{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500;white-space:nowrap;display:inline-block}
-  .overdue-flag{font-size:10px;color:var(--red);font-weight:500}
+/* doc table */
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sec-title{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.dtable{background:var(--bg1);border:0.5px solid var(--b3);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.dth{display:grid;grid-template-columns:1fr 80px 95px 100px 70px;padding:7px 12px;border-bottom:0.5px solid var(--b3);background:var(--bg2)}
+.dth span{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em}
+.dtr{display:grid;grid-template-columns:1fr 80px 95px 100px 70px;padding:9px 12px;border-bottom:0.5px solid var(--b3);align-items:center;cursor:pointer;transition:background .1s}
+.dtr:last-child{border-bottom:none}
+.dtr:hover{background:var(--bg2)}
+.doc-name{font-size:12px;font-weight:500;color:var(--t1)}
+.doc-code{font-size:10px;color:var(--t3);font-family:monospace;margin-top:1px}
+.dc{font-size:12px;color:var(--t2)}
+.sbadge{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500;display:inline-block}
+.s-ok{background:var(--green-bg);color:var(--green-t)}
+.s-rev{background:var(--amber-bg);color:var(--amber-t)}
+.s-sub{background:var(--blue-bg);color:var(--blue-t)}
+.s-ov{background:var(--red-bg);color:var(--red-t)}
+.s-pend{background:var(--bg2);color:var(--t3);border:0.5px solid var(--b3)}
+.late{font-size:10px;color:var(--red);font-weight:600}
 
-  /* ── Timeline ── */
-  .timeline{background:var(--bg1);border:0.5px solid var(--b3);border-radius:10px;overflow:hidden;margin-bottom:16px}
-  .tl-header{padding:12px 14px;border-bottom:0.5px solid var(--b3);background:var(--bg2);font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
-  .tl-body{padding:14px}
-  .milestone-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-  .milestone-row:last-child{margin-bottom:0}
-  .ms-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:1px}
-  .ms-info{flex:1}
-  .ms-name{font-size:12px;font-weight:500;color:var(--t1)}
-  .ms-date{font-size:11px;color:var(--t3)}
-  .ms-right{text-align:right}
-  .ms-days{font-size:11px;font-weight:500}
+/* compliance checklist */
+.checklist{background:var(--bg1);border:0.5px solid var(--b3);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.cl-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:0.5px solid var(--b3)}
+.cl-item:last-child{border-bottom:none}
+.cl-check{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.cl-check.ok{background:var(--green-bg);color:var(--green-t)}
+.cl-check.fail{background:var(--red-bg);color:var(--red-t)}
+.cl-check.warn{background:var(--amber-bg);color:var(--amber-t)}
+.cl-check.na{background:var(--bg2);color:var(--t3);border:0.5px solid var(--b3)}
+.cl-text{flex:1}
+.cl-name{font-size:12px;font-weight:500;color:var(--t1)}
+.cl-detail{font-size:11px;color:var(--t3);margin-top:1px}
+.cl-ref{font-size:10px;color:var(--blue-t);margin-left:auto}
 
-  /* ── Right panel (agent) ── */
-  .right{background:var(--bg1);border-left:0.5px solid var(--b3);display:flex;flex-direction:column;overflow:hidden}
-  .agent-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--b3);display:flex;align-items:center;gap:8px}
-  .agent-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
-  .agent-title{font-size:12px;font-weight:500;color:var(--t1)}
-  .agent-sub{font-size:11px;color:var(--t3);margin-left:auto}
+/* right: agent */
+.afeed{flex:1;overflow-y:auto;padding:10px}
+.msg{margin-bottom:9px}
+.msg-who{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.msg-body{font-size:12px;color:var(--t2);line-height:1.55;background:var(--bg2);border-radius:8px;padding:9px 11px;border:0.5px solid var(--b3)}
+.msg.agent .msg-body{background:var(--blue-bg);border-color:rgba(24,95,165,.15);color:var(--blue-t)}
+.msg.warn .msg-body{background:var(--amber-bg);border-color:rgba(186,117,23,.2);color:var(--amber-t)}
+.acard{background:var(--bg2);border:0.5px solid var(--b3);border-radius:8px;padding:10px;margin-bottom:7px}
+.acard-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:4px}
+.acard-body{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
+.acard-btns{display:flex;gap:5px}
+.acbtn{flex:1;font-size:11px;padding:5px;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;text-align:center}
+.acbtn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.ainput-row{padding:10px;border-top:0.5px solid var(--b3);display:flex;gap:6px;flex-shrink:0}
+.ainput{flex:1;padding:7px 10px;border:0.5px solid var(--b3);border-radius:6px;background:var(--bg2);font-size:12px;color:var(--t1);outline:none}
+.ainput:focus{border-color:var(--blue)}
+.asend{padding:7px 12px;border-radius:6px;background:var(--blue);color:#fff;font-size:12px;border:none;cursor:pointer;font-weight:500}
 
-  .agent-feed{flex:1;overflow-y:auto;padding:12px}
-  .msg{margin-bottom:10px}
-  .msg-who{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-  .msg-body{font-size:12px;color:var(--t2);line-height:1.6;background:var(--bg2);border-radius:8px;padding:10px 12px;border:0.5px solid var(--b3)}
-  .msg.agent .msg-body{background:var(--blue-bg);border-color:rgba(24,95,165,.15);color:var(--blue-t)}
-  .msg.alert .msg-body{background:var(--amber-bg);border-color:rgba(186,117,23,.2);color:var(--amber-t)}
-  .msg.ok .msg-body{background:var(--green-bg);border-color:rgba(99,153,34,.2);color:var(--green-t)}
-
-  .action-card{background:var(--bg2);border:0.5px solid var(--b3);border-radius:8px;padding:10px 12px;margin-bottom:8px}
-  .ac-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:4px}
-  .ac-body{font-size:11px;color:var(--t2);line-height:1.55;margin-bottom:8px}
-  .ac-buttons{display:flex;gap:6px}
-  .ac-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500}
-  .ac-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-  .ac-btn.warn{background:var(--amber-bg);border-color:rgba(186,117,23,.3);color:var(--amber-t)}
-
-  .agent-input-row{padding:10px 12px;border-top:0.5px solid var(--b3);display:flex;gap:6px}
-  .agent-input{flex:1;padding:7px 10px;border:0.5px solid var(--b3);border-radius:6px;background:var(--bg2);font-size:12px;color:var(--t1);outline:none}
-  .agent-input:focus{border-color:var(--blue)}
-  .agent-send{padding:7px 12px;border-radius:6px;background:var(--blue);color:#fff;font-size:12px;border:none;cursor:pointer;font-weight:500}
-
-  /* ── KPI strip ── */
-  .kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b3);border:0.5px solid var(--b3);border-radius:10px;overflow:hidden;margin-bottom:16px}
-  .kpi{background:var(--bg1);padding:12px 14px}
-  .kpi-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-  .kpi-val{font-size:20px;font-weight:500;color:var(--t1);line-height:1}
-  .kpi-sub{font-size:11px;color:var(--t3);margin-top:3px}
-
-  /* badge helpers */
-  .s-submitted{background:var(--blue-bg);color:var(--blue-t)}
-  .s-approved{background:var(--green-bg);color:var(--green-t)}
-  .s-review{background:var(--amber-bg);color:var(--amber-t)}
-  .s-overdue{background:var(--red-bg);color:var(--red-t)}
-  .s-pending{background:var(--bg2);color:var(--t3);border:0.5px solid var(--b3)}
-  .s-fab{background:var(--purple-bg);color:var(--purple-t)}
-
-  /* Scrollbar */
-  ::-webkit-scrollbar{width:4px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
 </style>
 </head>
 <body>
-
-<!-- ── Top bar ── -->
 <div class="topbar">
   <div class="logo">Package<span>Engineer</span></div>
-  <span class="topbar-sep">/</span>
-  <span class="topbar-sub">Vendor Portal</span>
+  <span class="tb-sep">/</span>
+  <span class="tb-sub">Vendor portal</span>
   <div class="spacer"></div>
-  <span class="topbar-tag">NCS-1A · Compression train 2</span>
-  <button class="topbar-btn">Export CSV</button>
-  <button class="topbar-btn" style="background:var(--blue);color:#fff;border-color:var(--blue)">+ New RFQ</button>
+  <span class="tb-pill" style="background:var(--blue-bg);color:var(--blue-t)">NCS-1A · Compression train 2</span>
+  <button class="tb-btn">Export</button>
+  <button class="tb-btn" style="background:var(--blue);color:#fff;border-color:var(--blue)">+ Upload</button>
 </div>
 
-<!-- ── 3-column layout ── -->
 <div class="layout">
 
-  <!-- ── Left: vendor list ── -->
+  <!-- LEFT -->
   <div class="left">
-    <div class="panel-header">
-      <div class="panel-title">Vendors</div>
-      <div class="panel-count">8 vendors · 14 packages</div>
+    <div class="ph"><div class="ph-title">Vendors</div><div class="ph-sub">8 vendors · 14 packages</div></div>
+    <div class="vlist">
+      <div class="vi active">
+        <div class="vi-top"><span class="vi-name">Siemens Energy</span><span class="vi-tag" style="background:var(--purple-bg);color:var(--purple-t)">Fabricating</span></div>
+        <div class="vi-mr">MR-4420 · Gas compressor</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:62%;background:var(--blue)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">Alfa Laval</span><span class="vi-tag" style="background:var(--amber-bg);color:var(--amber-t)">In review</span></div>
+        <div class="vi-mr">MR-4431 · Heat exchanger</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:78%;background:var(--amber)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">Valmet</span><span class="vi-tag" style="background:var(--green-bg);color:var(--green-t)">Approved</span></div>
+        <div class="vi-mr">MR-4408 · Separator vessel</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:95%;background:var(--green)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">Emerson</span><span class="vi-tag" style="background:var(--blue-bg);color:var(--blue-t)">Submitted</span></div>
+        <div class="vi-mr">MR-4445 · Control valves</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:40%;background:var(--blue)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">Flowserve</span><span class="vi-tag" style="background:var(--red-bg);color:var(--red-t)">Overdue</span></div>
+        <div class="vi-mr">MR-4452 · Pump skid</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:28%;background:var(--red)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">ABB</span><span class="vi-tag" style="background:var(--amber-bg);color:var(--amber-t)">In review</span></div>
+        <div class="vi-mr">MR-4461 · Motor control centre</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:55%;background:var(--amber)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">Cameron (SLB)</span><span class="vi-tag" style="background:var(--bg2);color:var(--t3);border:0.5px solid var(--b3)">Pending</span></div>
+        <div class="vi-mr">MR-4468 · Wellhead assembly</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:12%;background:var(--t3)"></div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-top"><span class="vi-name">Sulzer</span><span class="vi-tag" style="background:var(--purple-bg);color:var(--purple-t)">Fabricating</span></div>
+        <div class="vi-mr">MR-4474 · Lube oil system</div>
+        <div class="vi-bar"><div class="vi-fill" style="width:48%;background:var(--purple)"></div></div>
+      </div>
     </div>
-    <div class="search">
-      <span class="search-icon">&#9906;</span>
-      <input type="text" placeholder="Search vendors or MR…">
+  </div>
+
+  <!-- CENTRE -->
+  <div class="centre">
+    <div class="ch">
+      <div class="ch-name">Siemens Energy AS</div>
+      <div class="ch-meta">MR-4420 · Gas Compressor Package · PO-NCS1A-0081 · Lead: T. Bergman · Ågotnes, NO · NOK 34.2M</div>
+      <div class="ch-pills">
+        <span class="cpill" style="background:var(--purple-bg);color:var(--purple-t)">In Fabrication</span>
+        <span class="cpill" style="background:var(--red-bg);color:var(--red-t)">3 docs overdue</span>
+        <span class="cpill" style="background:var(--amber-bg);color:var(--amber-t)">2 compliance gaps</span>
+        <span class="cpill" style="background:var(--green-bg);color:var(--green-t)">FAT scheduled</span>
+      </div>
     </div>
-    <div class="vendor-list">
+    <div class="ctabs">
+      <div class="ctab active">Upload & status</div>
+      <div class="ctab">Compliance</div>
+      <div class="ctab">Milestones</div>
+      <div class="ctab">Contacts</div>
+    </div>
+    <div class="cbody">
 
-      <div class="vendor-item active">
-        <div class="vi-row1">
-          <span class="vi-name">Siemens Energy</span>
-          <span class="vi-tag s-fab">Fabricating</span>
-        </div>
-        <div class="vi-pkg">MR-4420 · Gas compressor package</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:62%;background:var(--blue)"></div></div>
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-l">Total required</div><div class="kpi-v">24</div><div class="kpi-s">4 categories</div></div>
+        <div class="kpi"><div class="kpi-l">Approved</div><div class="kpi-v" style="color:var(--green)">11</div><div class="kpi-s">46% complete</div></div>
+        <div class="kpi"><div class="kpi-l">In review</div><div class="kpi-v" style="color:var(--amber)">7</div><div class="kpi-s">avg 4.2 days open</div></div>
+        <div class="kpi"><div class="kpi-l">Overdue</div><div class="kpi-v" style="color:var(--red)">3</div><div class="kpi-s">action required</div></div>
       </div>
 
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">Alfa Laval</span>
-          <span class="vi-tag s-review">In review</span>
-        </div>
-        <div class="vi-pkg">MR-4431 · Heat exchanger bundle</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:78%;background:var(--amber)"></div></div>
+      <!-- Upload zone -->
+      <div class="upload-zone">
+        <div class="uz-icon">⬆</div>
+        <div class="uz-title">Drop files to upload</div>
+        <div class="uz-sub">PDF, DWG, XLSX · max 50 MB per file</div>
+        <div class="uz-btn">Browse files</div>
       </div>
 
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">Valmet</span>
-          <span class="vi-tag s-approved">Approved</span>
+      <!-- Engineering docs -->
+      <div class="sec-hd"><span class="sec-title">Engineering documents</span><span style="font-size:11px;color:var(--t3)">9 docs</span></div>
+      <div class="dtable">
+        <div class="dth"><span>Document</span><span>Rev</span><span>Due date</span><span>Status</span><span>Action</span></div>
+        <div class="dtr">
+          <div><div class="doc-name">Vendor Data Sheet</div><div class="doc-code">VDS-4420-001</div></div>
+          <div class="dc">B</div><div class="dc">12 Mar 2026</div>
+          <div><span class="sbadge s-ok">Approved</span></div><div class="dc"></div>
         </div>
-        <div class="vi-pkg">MR-4408 · Separator vessel</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:95%;background:var(--green)"></div></div>
+        <div class="dtr">
+          <div><div class="doc-name">General Arrangement Drawing</div><div class="doc-code">GAD-4420-001</div></div>
+          <div class="dc">C</div><div class="dc">18 Mar 2026</div>
+          <div><span class="sbadge s-rev">In review</span></div><div class="dc" style="color:var(--blue);font-size:11px">Review →</div>
+        </div>
+        <div class="dtr">
+          <div><div class="doc-name">P&ID — Compressor skid</div><div class="doc-code">PID-4420-003</div></div>
+          <div class="dc">A</div><div class="dc">10 Mar 2026</div>
+          <div><span class="sbadge s-ov">Overdue</span></div><div class="late">15d late</div>
+        </div>
+        <div class="dtr">
+          <div><div class="doc-name">Utility consumption summary</div><div class="doc-code">UCS-4420-001</div></div>
+          <div class="dc">A</div><div class="dc">22 Mar 2026</div>
+          <div><span class="sbadge s-sub">Submitted</span></div><div class="dc" style="color:var(--blue);font-size:11px">Review →</div>
+        </div>
+        <div class="dtr">
+          <div><div class="doc-name">Nozzle orientation drawing</div><div class="doc-code">NOD-4420-001</div></div>
+          <div class="dc">—</div><div class="dc">01 Apr 2026</div>
+          <div><span class="sbadge s-pend">Pending</span></div><div class="dc"></div>
+        </div>
       </div>
 
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">Emerson</span>
-          <span class="vi-tag s-submitted">Submitted</span>
+      <!-- Quality docs -->
+      <div class="sec-hd"><span class="sec-title">Quality & inspection</span><span style="font-size:11px;color:var(--t3)">7 docs</span></div>
+      <div class="dtable">
+        <div class="dth"><span>Document</span><span>Rev</span><span>Due date</span><span>Status</span><span>Action</span></div>
+        <div class="dtr">
+          <div><div class="doc-name">Inspection & Test Plan (ITP)</div><div class="doc-code">ITP-4420-001</div></div>
+          <div class="dc">B</div><div class="dc">05 Mar 2026</div>
+          <div><span class="sbadge s-ok">Approved</span></div><div class="dc"></div>
         </div>
-        <div class="vi-pkg">MR-4445 · Control valve manifest</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:40%;background:var(--blue)"></div></div>
+        <div class="dtr">
+          <div><div class="doc-name">Material Test Report — shaft</div><div class="doc-code">MTR-4420-003</div></div>
+          <div class="dc">A</div><div class="dc">20 Mar 2026</div>
+          <div><span class="sbadge s-ov">Overdue</span></div><div class="late">5d late</div>
+        </div>
+        <div class="dtr">
+          <div><div class="doc-name">Weld Procedure Specification</div><div class="doc-code">WPS-4420-007</div></div>
+          <div class="dc">C</div><div class="dc">14 Mar 2026</div>
+          <div><span class="sbadge s-ok">Approved</span></div><div class="dc"></div>
+        </div>
+        <div class="dtr">
+          <div><div class="doc-name">FAT procedure & acceptance</div><div class="doc-code">FAT-4420-001</div></div>
+          <div class="dc">A</div><div class="dc">28 Mar 2026</div>
+          <div><span class="sbadge s-rev">In review</span></div><div class="dc" style="color:var(--blue);font-size:11px">Review →</div>
+        </div>
+        <div class="dtr">
+          <div><div class="doc-name">NORSOK M-630 MDS pack</div><div class="doc-code">MDS-4420-001</div></div>
+          <div class="dc">A</div><div class="dc">28 Mar 2026</div>
+          <div><span class="sbadge s-ov">Overdue</span></div><div class="late">2d late</div>
+        </div>
       </div>
 
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">Flowserve</span>
-          <span class="vi-tag s-overdue">Overdue</span>
+      <!-- Compliance checklist -->
+      <div class="sec-hd"><span class="sec-title">Compliance checklist</span></div>
+      <div class="checklist">
+        <div class="cl-item">
+          <div class="cl-check ok">✓</div>
+          <div class="cl-text"><div class="cl-name">ATEX / IECEx certification</div><div class="cl-detail">Zone 1 rated — cert. DE-0442 valid to 2028</div></div>
+          <div class="cl-ref">IECEx</div>
         </div>
-        <div class="vi-pkg">MR-4452 · Pump skid assembly</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:28%;background:var(--red)"></div></div>
-      </div>
-
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">ABB</span>
-          <span class="vi-tag s-review">In review</span>
+        <div class="cl-item">
+          <div class="cl-check ok">✓</div>
+          <div class="cl-text"><div class="cl-name">PED 2014/68/EU — pressure equipment</div><div class="cl-detail">Module H conformity assessment complete</div></div>
+          <div class="cl-ref">PED</div>
         </div>
-        <div class="vi-pkg">MR-4461 · Motor control centre</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:55%;background:var(--amber)"></div></div>
-      </div>
-
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">Cameron (SLB)</span>
-          <span class="vi-tag s-pending">Pending</span>
+        <div class="cl-item">
+          <div class="cl-check fail">✗</div>
+          <div class="cl-text"><div class="cl-name">NORSOK M-630 MDS — materials</div><div class="cl-detail">MDS pack overdue — submission required before FAT</div></div>
+          <div class="cl-ref">M-630</div>
         </div>
-        <div class="vi-pkg">MR-4468 · Wellhead assembly</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:12%;background:var(--t3)"></div></div>
-      </div>
-
-      <div class="vendor-item">
-        <div class="vi-row1">
-          <span class="vi-name">Sulzer</span>
-          <span class="vi-tag s-fab">Fabricating</span>
+        <div class="cl-item">
+          <div class="cl-check warn">!</div>
+          <div class="cl-text"><div class="cl-name">NORSOK Z-008 — criticality ranking</div><div class="cl-detail">Submitted Rev A — 2 comment cycles pending close-out</div></div>
+          <div class="cl-ref">Z-008</div>
         </div>
-        <div class="vi-pkg">MR-4474 · Lube oil system</div>
-        <div class="vi-progress"><div class="vi-progress-bar" style="width:48%;background:var(--purple)"></div></div>
+        <div class="cl-item">
+          <div class="cl-check ok">✓</div>
+          <div class="cl-text"><div class="cl-name">Machinery Directive 2006/42/EC</div><div class="cl-detail">CE marking confirmed — Declaration of Conformity attached</div></div>
+          <div class="cl-ref">MD</div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-check ok">✓</div>
+          <div class="cl-text"><div class="cl-name">Material traceability — EN 10204 3.1</div><div class="cl-detail">Mill certs received for all pressure-retaining parts</div></div>
+          <div class="cl-ref">EN 10204</div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-check na">—</div>
+          <div class="cl-text"><div class="cl-name">SOLAS fire & gas classification</div><div class="cl-detail">N/A — non-marine application</div></div>
+          <div class="cl-ref">SOLAS</div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-check ok">✓</div>
+          <div class="cl-text"><div class="cl-name">Vendor quality plan (VQP) approved</div><div class="cl-detail">Rev B approved 05 Mar 2026 by L. Nygaard</div></div>
+          <div class="cl-ref">VQP</div>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ── Centre: vendor detail ── -->
-  <div class="centre">
-    <div class="centre-header">
-      <div>
-        <div class="vendor-name">Siemens Energy AS</div>
-        <div class="vendor-meta">
-          MR-4420 · Gas Compressor Package · PO-NCS1A-0081 · Lead: T. Bergman
-          &nbsp;·&nbsp; Delivery: Ågotnes, NO &nbsp;·&nbsp; Contract value: NOK 34.2M
-        </div>
-      </div>
-      <div class="ch-spacer"></div>
-      <div class="status-pills">
-        <span class="spill" style="background:var(--purple-bg);color:var(--purple-t)">In Fabrication</span>
-        <span class="spill" style="background:var(--amber-bg);color:var(--amber-t)">3 docs overdue</span>
-        <span class="spill" style="background:var(--green-bg);color:var(--green-t)">FAT scheduled</span>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <div class="tab active">Documents</div>
-      <div class="tab">Milestones</div>
-      <div class="tab">Deviations (2)</div>
-      <div class="tab">Contacts</div>
-      <div class="tab">Audit log</div>
-    </div>
-
-    <div class="centre-body">
-
-      <!-- KPI strip -->
-      <div class="kpi-strip">
-        <div class="kpi">
-          <div class="kpi-label">Total docs</div>
-          <div class="kpi-val">24</div>
-          <div class="kpi-sub">across 4 categories</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Approved</div>
-          <div class="kpi-val" style="color:var(--green)">11</div>
-          <div class="kpi-sub">46% complete</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">In review</div>
-          <div class="kpi-val" style="color:var(--amber)">7</div>
-          <div class="kpi-sub">avg 4.2 days open</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Overdue</div>
-          <div class="kpi-val" style="color:var(--red)">3</div>
-          <div class="kpi-sub">action required</div>
-        </div>
-      </div>
-
-      <!-- Engineering docs -->
-      <div class="section-hd">
-        <span class="section-title">Engineering documents</span>
-        <span class="section-n">9 docs</span>
-      </div>
-      <div class="doc-table">
-        <div class="dt-head">
-          <span>Document</span>
-          <span>Rev</span>
-          <span>Due date</span>
-          <span>Status</span>
-          <span>Action</span>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Vendor Data Sheet — Compressor</div>
-            <div class="doc-code">VDS-4420-001</div>
-          </div>
-          <div class="dt-cell">B</div>
-          <div class="dt-cell">12 Mar 2026</div>
-          <div><span class="status-badge s-approved">Approved</span></div>
-          <div class="dt-cell"></div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">General Arrangement Drawing</div>
-            <div class="doc-code">GAD-4420-001</div>
-          </div>
-          <div class="dt-cell">C</div>
-          <div class="dt-cell">18 Mar 2026</div>
-          <div><span class="status-badge s-review">In review</span></div>
-          <div class="dt-cell" style="color:var(--blue);font-size:11px">Review →</div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">P&amp;ID — Compressor skid</div>
-            <div class="doc-code">PID-4420-003</div>
-          </div>
-          <div class="dt-cell">A</div>
-          <div class="dt-cell">10 Mar 2026</div>
-          <div><span class="status-badge s-overdue">Overdue</span></div>
-          <div class="overdue-flag">15d late</div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Utility consumption summary</div>
-            <div class="doc-code">UCS-4420-001</div>
-          </div>
-          <div class="dt-cell">A</div>
-          <div class="dt-cell">22 Mar 2026</div>
-          <div><span class="status-badge s-submitted">Submitted</span></div>
-          <div class="dt-cell" style="color:var(--blue);font-size:11px">Review →</div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Nozzle orientation drawing</div>
-            <div class="doc-code">NOD-4420-001</div>
-          </div>
-          <div class="dt-cell">—</div>
-          <div class="dt-cell">01 Apr 2026</div>
-          <div><span class="status-badge s-pending">Pending</span></div>
-          <div class="dt-cell"></div>
-        </div>
-      </div>
-
-      <!-- Quality docs -->
-      <div class="section-hd">
-        <span class="section-title">Quality &amp; inspection</span>
-        <span class="section-n">7 docs</span>
-      </div>
-      <div class="doc-table">
-        <div class="dt-head">
-          <span>Document</span>
-          <span>Rev</span>
-          <span>Due date</span>
-          <span>Status</span>
-          <span>Action</span>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Inspection &amp; Test Plan (ITP)</div>
-            <div class="doc-code">ITP-4420-001</div>
-          </div>
-          <div class="dt-cell">B</div>
-          <div class="dt-cell">05 Mar 2026</div>
-          <div><span class="status-badge s-approved">Approved</span></div>
-          <div class="dt-cell"></div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Material Test Report — shaft</div>
-            <div class="doc-code">MTR-4420-003</div>
-          </div>
-          <div class="dt-cell">A</div>
-          <div class="dt-cell">20 Mar 2026</div>
-          <div><span class="status-badge s-overdue">Overdue</span></div>
-          <div class="overdue-flag">5d late</div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Weld procedure specification (WPS)</div>
-            <div class="doc-code">WPS-4420-007</div>
-          </div>
-          <div class="dt-cell">C</div>
-          <div class="dt-cell">14 Mar 2026</div>
-          <div><span class="status-badge s-approved">Approved</span></div>
-          <div class="dt-cell"></div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">FAT procedure &amp; acceptance criteria</div>
-            <div class="doc-code">FAT-4420-001</div>
-          </div>
-          <div class="dt-cell">A</div>
-          <div class="dt-cell">28 Mar 2026</div>
-          <div><span class="status-badge s-review">In review</span></div>
-          <div class="dt-cell" style="color:var(--blue);font-size:11px">Review →</div>
-        </div>
-        <div class="dt-row">
-          <div>
-            <div class="doc-title">Hydrostatic test report</div>
-            <div class="doc-code">HTR-4420-001</div>
-          </div>
-          <div class="dt-cell">—</div>
-          <div class="dt-cell">10 Apr 2026</div>
-          <div><span class="status-badge s-pending">Pending</span></div>
-          <div class="dt-cell"></div>
-        </div>
-      </div>
-
-      <!-- Milestones mini-view -->
-      <div class="section-hd">
-        <span class="section-title">Key milestones</span>
-      </div>
-      <div class="timeline">
-        <div class="tl-body">
-
-          <div class="milestone-row">
-            <div class="ms-dot" style="background:var(--green)"></div>
-            <div class="ms-info">
-              <div class="ms-name">PO issued</div>
-              <div class="ms-date">14 Jan 2026</div>
-            </div>
-            <div class="ms-right"><div class="ms-days" style="color:var(--green)">Complete</div></div>
-          </div>
-
-          <div class="milestone-row">
-            <div class="ms-dot" style="background:var(--green)"></div>
-            <div class="ms-info">
-              <div class="ms-name">Kick-off meeting</div>
-              <div class="ms-date">28 Jan 2026</div>
-            </div>
-            <div class="ms-right"><div class="ms-days" style="color:var(--green)">Complete</div></div>
-          </div>
-
-          <div class="milestone-row">
-            <div class="ms-dot" style="background:var(--amber)"></div>
-            <div class="ms-info">
-              <div class="ms-name">Critical design review (CDR)</div>
-              <div class="ms-date">02 Apr 2026</div>
-            </div>
-            <div class="ms-right"><div class="ms-days" style="color:var(--amber)">8 days</div></div>
-          </div>
-
-          <div class="milestone-row">
-            <div class="ms-dot" style="background:var(--blue)"></div>
-            <div class="ms-info">
-              <div class="ms-name">Factory Acceptance Test (FAT)</div>
-              <div class="ms-date">12 May 2026</div>
-            </div>
-            <div class="ms-right"><div class="ms-days" style="color:var(--blue)">48 days</div></div>
-          </div>
-
-          <div class="milestone-row">
-            <div class="ms-dot" style="background:var(--t3)"></div>
-            <div class="ms-info">
-              <div class="ms-name">Ready for shipment (RFS)</div>
-              <div class="ms-date">20 Jun 2026</div>
-            </div>
-            <div class="ms-right"><div class="ms-days" style="color:var(--t3)">87 days</div></div>
-          </div>
-
-          <div class="milestone-row">
-            <div class="ms-dot" style="background:var(--t3)"></div>
-            <div class="ms-info">
-              <div class="ms-name">Delivery to site (Ågotnes)</div>
-              <div class="ms-date">08 Jul 2026</div>
-            </div>
-            <div class="ms-right"><div class="ms-days" style="color:var(--t3)">105 days</div></div>
-          </div>
-
-        </div>
-      </div>
-
-    </div><!-- /centre-body -->
-  </div><!-- /centre -->
-
-  <!-- ── Right: agent panel ── -->
+  <!-- RIGHT: agent -->
   <div class="right">
-    <div class="agent-header">
-      <div class="agent-dot"></div>
-      <div class="agent-title">Vendor agent</div>
-      <div class="agent-sub">Siemens Energy · MR-4420</div>
+    <div class="ph" style="display:flex;align-items:center;gap:7px">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+      <div>
+        <div class="ph-title" style="margin:0">Vendor agent</div>
+      </div>
+      <div style="margin-left:auto;font-size:11px;color:var(--t3)">Siemens · MR-4420</div>
     </div>
+    <div class="afeed">
 
-    <div class="agent-feed">
-
-      <div class="msg alert">
+      <div class="msg warn">
         <div class="msg-who">Alert · 09:14</div>
-        <div class="msg-body">PID-4420-003 is 15 days overdue. Siemens submitted Rev A on 18 Feb but it was returned with comments on 22 Feb. No resubmission received. CDR is 8 days away.</div>
+        <div class="msg-body">PID-4420-003 is 15 days overdue. Rev A was returned with comments on 22 Feb — no resubmission received. CDR is in 8 days. FAT schedule is at risk.</div>
       </div>
 
-      <div class="action-card">
-        <div class="ac-title">Send overdue reminder</div>
-        <div class="ac-body">Draft a formal overdue notice to Tobias Richter (Siemens) referencing PID-4420-003, contractual schedule, and CDR impact. CC project manager.</div>
-        <div class="ac-buttons">
-          <button class="ac-btn primary">Send notice</button>
-          <button class="ac-btn">Edit draft</button>
-          <button class="ac-btn warn">Escalate</button>
+      <div class="acard">
+        <div class="acard-title">Send overdue notice — PID-4420-003</div>
+        <div class="acard-body">Draft formal notice to Tobias Richter (Siemens) with contractual reference, CDR date impact, and 48h resubmission deadline. CC: T. Bergman, L. Nygaard.</div>
+        <div class="acard-btns">
+          <div class="acbtn primary">Send notice</div>
+          <div class="acbtn">Edit</div>
+          <div class="acbtn">Escalate</div>
         </div>
       </div>
 
-      <div class="msg alert">
+      <div class="msg warn">
         <div class="msg-who">Alert · 09:14</div>
-        <div class="msg-body">MTR-4420-003 (Material Test Report, main shaft) is 5 days overdue. Required before FAT procedure can be finalised.</div>
+        <div class="msg-body">NORSOK M-630 MDS pack (MDS-4420-001) is 2 days overdue and is a hard gate for FAT. FAT is scheduled for 12 May — 48 days away.</div>
       </div>
 
-      <div class="action-card">
-        <div class="ac-title">Request updated MTR ETA</div>
-        <div class="ac-body">Ask Siemens for a revised submission date for MTR-4420-003, noting FAT prep dependency. Due date was 20 Mar.</div>
-        <div class="ac-buttons">
-          <button class="ac-btn primary">Send request</button>
-          <button class="ac-btn">Dismiss</button>
+      <div class="acard">
+        <div class="acard-title">Request MDS revised ETA</div>
+        <div class="acard-body">Request from Siemens a confirmed submission date for MDS-4420-001, noting FAT dependency and NORSOK compliance gate.</div>
+        <div class="acard-btns">
+          <div class="acbtn primary">Send request</div>
+          <div class="acbtn">Dismiss</div>
         </div>
       </div>
 
       <div class="msg agent">
         <div class="msg-who">Agent · 08:55</div>
-        <div class="msg-body">FAT-4420-001 was submitted yesterday (Rev A). Cross-checking against the approved ITP and NCS-1A acceptance criteria — 2 items flagged for your attention before you approve. Want me to list them?</div>
+        <div class="msg-body">FAT-4420-001 Rev A cross-checked against ITP-4420-001 Rev B. 2 items diverge: §4.3 vibration acceptance limits and §6.1 noise at rated load. Both need resolution before CDR.</div>
       </div>
 
-      <div class="action-card">
-        <div class="ac-title">Review FAT procedure flags</div>
-        <div class="ac-body">2 acceptance criteria in FAT-4420-001 diverge from ITP-4420-001 Rev B. Sections 4.3 (vibration limits) and 6.1 (noise at rated load). Review before CDR.</div>
-        <div class="ac-buttons">
-          <button class="ac-btn primary">Open comparison</button>
-          <button class="ac-btn">Ignore</button>
+      <div class="acard">
+        <div class="acard-title">Open FAT vs ITP comparison</div>
+        <div class="acard-body">Side-by-side diff of FAT-4420-001 §4.3 and §6.1 against approved ITP. Recommend raising NORSOK Z-013 variance request if limits cannot be aligned.</div>
+        <div class="acard-btns">
+          <div class="acbtn primary">Open diff</div>
+          <div class="acbtn">Raise variance</div>
         </div>
       </div>
 
-      <div class="msg ok">
-        <div class="msg-who">Agent · 08:12</div>
-        <div class="msg-body">GAD-4420-001 Rev C was submitted. Routing to mechanical lead (L. Nygaard) for review. Expected turnaround: 5 working days.</div>
-      </div>
-
-      <div class="msg">
-        <div class="msg-who">You · 08:05</div>
-        <div class="msg-body">When is the next Siemens progress meeting?</div>
-      </div>
-
       <div class="msg agent">
-        <div class="msg-who">Agent · 08:06</div>
-        <div class="msg-body">Next bi-weekly progress call is scheduled for Thu 27 Mar at 10:00 CET. Agenda not yet submitted. I can draft one based on open actions if you like.</div>
+        <div class="msg-who">Agent · 08:12</div>
+        <div class="msg-body">GAD-4420-001 Rev C submitted and routed to L. Nygaard for mechanical review. Expected turnaround: 5 working days (by 01 Apr).</div>
       </div>
 
     </div>
-
-    <div class="agent-input-row">
-      <input class="agent-input" type="text" placeholder="Ask about this vendor or package…">
-      <button class="agent-send">Send</button>
+    <div class="ainput-row">
+      <input class="ainput" type="text" placeholder="Ask about this vendor or package…">
+      <button class="asend">Send</button>
     </div>
   </div>
 
-</div><!-- /layout -->
-
+</div>
 </body>
 </html>
