@@ -159,6 +159,56 @@ html,body{height:100%;overflow:hidden;background:var(--bg3)}
 
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+
+/* ── centre split ── */
+.centre-upper{display:flex;flex-direction:column;overflow:hidden;min-height:120px}
+.resize-handle{height:5px;background:var(--b3);cursor:row-resize;flex-shrink:0;position:relative;transition:background .15s}
+.resize-handle:hover,.resize-handle.dragging{background:var(--blue)}
+.resize-handle::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:2px;border-radius:1px;background:var(--b2)}
+
+/* ── findings table panel ── */
+.ft-panel{display:flex;flex-direction:column;background:var(--bg1);border-top:0.5px solid var(--b3);overflow:hidden;min-height:80px}
+.ft-toolbar{display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:0.5px solid var(--b3);flex-shrink:0;flex-wrap:wrap;background:var(--bg1)}
+.ft-search{display:flex;align-items:center;gap:5px;background:var(--bg2);border:0.5px solid var(--b3);border-radius:6px;padding:0 9px;height:28px;min-width:180px}
+.ft-search input{border:none;background:none;font-size:12px;color:var(--t1);outline:none;width:140px}
+.ft-search-icon{color:var(--t3);font-size:11px}
+.ft-select{font-size:11px;padding:4px 8px;border-radius:5px;border:0.5px solid var(--b3);background:var(--bg2);color:var(--t2);cursor:pointer;height:28px}
+.ft-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:0.5px solid var(--b2);background:var(--bg2);color:var(--t2);cursor:pointer;height:28px;font-weight:500;white-space:nowrap}
+.ft-btn.active{background:var(--blue-bg);color:var(--blue-t);border-color:rgba(24,95,165,.3)}
+.ft-btn.ncr-bulk{background:var(--red-bg);color:var(--red-t);border-color:rgba(226,75,74,.3);display:none}
+.ft-btn.ncr-bulk.visible{display:block}
+.ft-spacer{flex:1}
+.ft-count{font-size:11px;color:var(--t3)}
+
+/* ── table ── */
+.ft-wrap{flex:1;overflow:auto}
+.ft-table{width:100%;border-collapse:collapse;font-size:11px}
+.ft-table th{position:sticky;top:0;background:var(--bg2);border-bottom:0.5px solid var(--b3);padding:6px 9px;text-align:left;font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;z-index:2;cursor:pointer;user-select:none}
+.ft-table th:hover{color:var(--t1)}
+.ft-table th.sort-asc::after{content:' ↑'}
+.ft-table th.sort-desc::after{content:' ↓'}
+.ft-table td{padding:6px 9px;border-bottom:0.5px solid var(--b3);vertical-align:middle;white-space:nowrap}
+.ft-table tr:last-child td{border-bottom:none}
+.ft-table tbody tr{cursor:pointer;transition:background .08s}
+.ft-table tbody tr:hover{background:var(--bg2)}
+.ft-table tbody tr.selected{background:var(--blue-bg)}
+.ft-table tbody tr.selected td{color:var(--blue-t)}
+.ft-table tr.group-header td{background:var(--bg2);font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:5px 9px;border-bottom:0.5px solid var(--b3)}
+
+/* table cell styles */
+.sev-badge{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle;flex-shrink:0}
+.sev-label{vertical-align:middle;font-weight:500}
+.type-pill{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500}
+.disc-pill{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:600}
+.stat-badge{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:500}
+.tbl-actions{display:flex;gap:3px}
+.tbl-btn{font-size:10px;padding:2px 7px;border-radius:3px;border:0.5px solid var(--b2);background:var(--bg1);color:var(--t2);cursor:pointer;font-weight:500;white-space:nowrap}
+.tbl-btn.ncr{background:var(--red-bg);border-color:rgba(226,75,74,.25);color:var(--red-t)}
+.tbl-btn.res{background:var(--green-bg);border-color:rgba(99,153,34,.25);color:var(--green-t)}
+.tbl-btn.asn{background:var(--blue-bg);border-color:rgba(24,95,165,.2);color:var(--blue-t)}
+.ft-table td:first-child{width:28px}
+.ft-cb{width:13px;height:13px;cursor:pointer;accent-color:var(--blue)}
+
 </style>
 </head>
 <body>
@@ -366,6 +416,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg3)}
 
   </div>
 
+  <div class="centre-upper">
   <!-- findings tabs -->
   <div class="ftabs">
     <div class="ftab active">Tag spec (14)</div>
@@ -538,9 +589,58 @@ html,body{height:100%;overflow:hidden;background:var(--bg3)}
       </div>
     </div>
 
-  </div>
+  </div><!-- /centre-upper -->
 
-</div>
+  <!-- ── resize handle ── -->
+  <div class="resize-handle" id="resizeHandle"></div>
+
+  <!-- ══════════════════════════════════════
+       FINDINGS TABLE PANEL
+  ══════════════════════════════════════════ -->
+  <div class="ft-panel" id="ftPanel">
+
+    <!-- toolbar -->
+    <div class="ft-toolbar">
+      <div class="ft-search">
+        <span class="ft-search-icon">⌕</span>
+        <input type="text" id="ftSearch" placeholder="Search findings…">
+      </div>
+      <select class="ft-select" id="ftSev"><option value="">All severity</option><option>Critical</option><option>Major</option><option>Minor</option></select>
+      <select class="ft-select" id="ftDisc"><option value="">All disciplines</option><option>Electrical</option><option>Instrument</option><option>Piping</option><option>Process</option></select>
+      <select class="ft-select" id="ftType"><option value="">All types</option><option>Tag spec</option><option>P&amp;ID</option><option>Standards</option><option>Interface</option></select>
+      <select class="ft-select" id="ftStat"><option value="">All status</option><option>Open</option><option>In review</option><option>Resolved</option><option>NCR raised</option></select>
+      <button class="ft-btn" id="ftGroup">Group by type</button>
+      <div class="ft-spacer"></div>
+      <span class="ft-count" id="ftCount"></span>
+      <button class="ft-btn ncr-bulk" id="ftBulkNcr">↑ Raise NCR for selected</button>
+      <button class="ft-btn" id="ftExport">⤓ Export CSV</button>
+    </div>
+
+    <!-- table -->
+    <div class="ft-wrap">
+      <table class="ft-table" id="ftTable">
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="ft-cb" id="ftSelAll"></th>
+            <th data-col="id">ID</th>
+            <th data-col="sev">Severity</th>
+            <th data-col="type">Type</th>
+            <th data-col="title">Finding title</th>
+            <th data-col="tag">Tag / Ref</th>
+            <th data-col="rule">Standard / Rule</th>
+            <th data-col="disc">Discipline</th>
+            <th data-col="status">Status</th>
+            <th data-col="doc">Document</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ftBody"></tbody>
+      </table>
+    </div>
+
+  </div><!-- /ft-panel -->
+
+</div><!-- /centre -->
 
 <!-- ══════════════════════════════════════
      RIGHT — Validation agent + standards
@@ -716,5 +816,220 @@ html,body{height:100%;overflow:hidden;background:var(--bg3)}
 
 </div>
 </div>
+
+<script>
+/* ─── findings data ─────────────────────────────────────────── */
+const ROWS = [
+  // Tag spec (14)
+  {id:'TSV-001',sev:'Critical',type:'Tag spec',title:'EX protection mismatch — PT-4420-001',tag:'PT-4420-001',rule:'ATEX 2014/34/EU · IEC 60079-14',disc:'Electrical',status:'Open',doc:'TS-NCS1A-EL-001'},
+  {id:'TSV-002',sev:'Critical',type:'Tag spec',title:'EX protection mismatch — PT-4420-002',tag:'PT-4420-002',rule:'ATEX 2014/34/EU · IEC 60079-14',disc:'Electrical',status:'NCR raised',doc:'TS-NCS1A-EL-001'},
+  {id:'TSV-003',sev:'Critical',type:'Tag spec',title:'Process connection rating insufficient — FV-4403',tag:'FV-4403',rule:'GTS-PE-101 §4.3 · ASME B16.5',disc:'Piping',status:'Open',doc:'TS-NCS1A-PP-002'},
+  {id:'TSV-004',sev:'Major',type:'Tag spec',title:'Instrument material class missing — TT-4420-007',tag:'TT-4420-007',rule:'NORSOK I-005 §6.2',disc:'Instrument',status:'In review',doc:'TS-NCS1A-IN-003'},
+  {id:'TSV-005',sev:'Major',type:'Tag spec',title:'Tag format non-compliant — 3 tags',tag:'LT-4420-12/13',rule:'NCS-1A Eng. Std. §2.1',disc:'Instrument',status:'Open',doc:'TAG-REG-001'},
+  {id:'TSV-006',sev:'Major',type:'Tag spec',title:'Actuator type missing — XV-4421/4422',tag:'XV-4421, XV-4422',rule:'IEC 61511 §11.9.3 · NORSOK S-001',disc:'Instrument',status:'Open',doc:'TS-NCS1A-IN-003'},
+  {id:'TSV-007',sev:'Minor',type:'Tag spec',title:'Instrument range not specified — PT-4420-005/008',tag:'PT-4420-005…008',rule:'NCS-1A Instr. Spec. §3.4',disc:'Instrument',status:'Open',doc:'DS-NCS1A-IN-007'},
+  {id:'TSV-008',sev:'Minor',type:'Tag spec',title:'Heat trace spec incomplete — 6 tags',tag:'HT-4420-001/006',rule:'NORSOK E-001 §8.2',disc:'Electrical',status:'Open',doc:'TS-NCS1A-EL-004'},
+  {id:'TSV-009',sev:'Critical',type:'Tag spec',title:'EX protection mismatch — TT-4420-003',tag:'TT-4420-003',rule:'ATEX 2014/34/EU · IEC 60079-14',disc:'Electrical',status:'Open',doc:'TS-NCS1A-EL-001'},
+  {id:'TSV-010',sev:'Critical',type:'Tag spec',title:'EX protection mismatch — TT-4420-004',tag:'TT-4420-004',rule:'ATEX 2014/34/EU · IEC 60079-14',disc:'Electrical',status:'Open',doc:'TS-NCS1A-EL-001'},
+  {id:'TSV-011',sev:'Major',type:'Tag spec',title:'Flange rating mismatch — discharge manifold',tag:'FLG-4420-011…021',rule:'GTS-PE-101 §4.3',disc:'Piping',status:'In review',doc:'TS-NCS1A-PP-002'},
+  {id:'TSV-012',sev:'Major',type:'Tag spec',title:'H2S material class missing — PT-4420-009',tag:'PT-4420-009',rule:'NORSOK I-005 §6.2 · ISO 15156',disc:'Instrument',status:'Open',doc:'TS-NCS1A-IN-003'},
+  {id:'TSV-013',sev:'Major',type:'Tag spec',title:'H2S material class missing — LT-4420-010',tag:'LT-4420-010',rule:'NORSOK I-005 §6.2 · ISO 15156',disc:'Instrument',status:'Open',doc:'TS-NCS1A-IN-003'},
+  {id:'TSV-014',sev:'Minor',type:'Tag spec',title:'Cable gland size not specified — FT-4420-002',tag:'FT-4420-002',rule:'NORSOK E-001 §9.3',disc:'Electrical',status:'Resolved',doc:'DS-NCS1A-EL-009'},
+  // P&ID consistency (9)
+  {id:'PID-001',sev:'Critical',type:'P&ID',title:'Valve missing on P&ID — bypass line EQ-4420',tag:'PID-4420-003 Rev A',rule:'NORSOK P-002 §5.1',disc:'Process',status:'Open',doc:'PID-4420-003'},
+  {id:'PID-002',sev:'Major',type:'P&ID',title:'7 tags on P&ID not in equipment list',tag:'PID-4420-003 Rev A',rule:'NCS-1A Doc. Ctrl. §4',disc:'Process',status:'Open',doc:'EQ-REG-001'},
+  {id:'PID-003',sev:'Major',type:'P&ID',title:'Spec break undocumented — lube oil outlet',tag:'3"-LO-4420-001-A1A',rule:'NORSOK P-002 §6.4',disc:'Piping',status:'Open',doc:'PID-4420-004'},
+  {id:'PID-004',sev:'Major',type:'P&ID',title:'PSV set pressure differs from datasheet',tag:'PSV-4420-001',rule:'ASME PCC-2 · API 520',disc:'Process',status:'In review',doc:'DS-NCS1A-PP-001'},
+  {id:'PID-005',sev:'Minor',type:'P&ID',title:'Instrument symbol non-standard — FIC-4401',tag:'FIC-4401',rule:'ISA 5.1-2009',disc:'Instrument',status:'Open',doc:'PID-4420-003'},
+  {id:'PID-006',sev:'Major',type:'P&ID',title:'Control valve fail-safe position missing',tag:'FV-4401, FV-4402',rule:'NORSOK I-005 §7.3',disc:'Instrument',status:'Open',doc:'PID-4420-003'},
+  {id:'PID-007',sev:'Minor',type:'P&ID',title:'Line size inconsistency — suction header',tag:'12"-GC-4420-001',rule:'NCS-1A Piping Std. §3',disc:'Piping',status:'Resolved',doc:'PID-4420-002'},
+  {id:'PID-008',sev:'Major',type:'P&ID',title:'Strainer not shown before compressor suction',tag:'K-4420-001 suction',rule:'GTS-PE-101 §7.1',disc:'Process',status:'Open',doc:'PID-4420-002'},
+  {id:'PID-009',sev:'Minor',type:'P&ID',title:'Drain valve missing — low-point instrument taps',tag:'PT-4420-011/012',rule:'NORSOK P-002 §8.2',disc:'Piping',status:'Open',doc:'PID-4420-003'},
+  // Standards (6)
+  {id:'STD-001',sev:'Critical',type:'Standards',title:'Zone 1 instruments with Zone 2 protection',tag:'PT-4420-001/002, TT-003/004',rule:'IEC 60079-14:2013 §5.3',disc:'Electrical',status:'NCR raised',doc:'ATEX-CERT-001'},
+  {id:'STD-002',sev:'Critical',type:'Standards',title:'SIL loop FIC-4403 incomplete documentation',tag:'FIC-4403',rule:'IEC 61511-1:2016 §11.9',disc:'Instrument',status:'Open',doc:'SIL-REPORT-001'},
+  {id:'STD-003',sev:'Major',type:'Standards',title:'Pressure class underspecified — 11 discharge flanges',tag:'FLG-4420-011…021',rule:'ASME B16.5-2017 Table 2-1.1',disc:'Piping',status:'In review',doc:'TS-NCS1A-PP-002'},
+  {id:'STD-004',sev:'Major',type:'Standards',title:'MR0175 compliance not specified — 3 tags',tag:'TT-4420-007, PT-009, LT-010',rule:'NORSOK I-005 §6.2 / ISO 15156',disc:'Instrument',status:'Open',doc:'TS-NCS1A-IN-003'},
+  {id:'STD-005',sev:'Minor',type:'Standards',title:'Cable tray fill ratio exceeds 40%',tag:'CT-4420-EL-03',rule:'NORSOK E-001 §10.2',disc:'Electrical',status:'Open',doc:'CABLE-TRAY-DWG-003'},
+  {id:'STD-006',sev:'Minor',type:'Standards',title:'Instrument air supply not spec-rated for -28°C',tag:'IA-SUPPLY-4420',rule:'NORSOK I-005 §4.1',disc:'Instrument',status:'Resolved',doc:'TS-NCS1A-IN-005'},
+  // Interface completeness (18)
+  {id:'INT-001',sev:'Critical',type:'Interface',title:'EL–IN interface: no cable entry in cable schedule',tag:'TT-4420-003, TT-4420-004',rule:'CS-NCS1A-002 Rev 3',disc:'Electrical',status:'Open',doc:'CS-NCS1A-002'},
+  {id:'INT-002',sev:'Critical',type:'Interface',title:'EL–IN interface: loop diagram missing cables',tag:'FIC-4403 loop',rule:'IEC 61511 §11.9.3',disc:'Instrument',status:'Open',doc:'LD-FIC-4403'},
+  {id:'INT-003',sev:'Major',type:'Interface',title:'PP–PE interface: line list missing design pressure',tag:'3"-LO-4420-001-A1A',rule:'NORSOK P-002 §6.1',disc:'Piping',status:'Open',doc:'LINE-LIST-001'},
+  {id:'INT-004',sev:'Major',type:'Interface',title:'IN–EL interface: no cable for PT-4420-005',tag:'PT-4420-005',rule:'CS-NCS1A-002',disc:'Instrument',status:'Open',doc:'CS-NCS1A-002'},
+  {id:'INT-005',sev:'Major',type:'Interface',title:'IN–EL interface: no cable for PT-4420-006',tag:'PT-4420-006',rule:'CS-NCS1A-002',disc:'Instrument',status:'Open',doc:'CS-NCS1A-002'},
+  {id:'INT-006',sev:'Major',type:'Interface',title:'IN–EL interface: no cable for LT-4420-008',tag:'LT-4420-008',rule:'CS-NCS1A-002',disc:'Electrical',status:'In review',doc:'CS-NCS1A-002'},
+  {id:'INT-007',sev:'Major',type:'Interface',title:'PE–PP interface: equipment nozzle loads not provided',tag:'K-4420-001',rule:'GTS-PE-101 §9.2',disc:'Process',status:'Open',doc:'NOZZLE-LOAD-001'},
+  {id:'INT-008',sev:'Minor',type:'Interface',title:'PP–EL interface: earthing connection point missing',tag:'V-4420-001',rule:'NORSOK E-001 §12.3',disc:'Electrical',status:'Open',doc:'EARTH-DWG-001'},
+  {id:'INT-009',sev:'Minor',type:'Interface',title:'IN–PE interface: alarm setpoints not in ALARM-LIST',tag:'PAH-4420-001',rule:'NCS-1A Alarm Std. §3',disc:'Instrument',status:'Open',doc:'ALARM-LIST-001'},
+  {id:'INT-010',sev:'Major',type:'Interface',title:'IN–EL interface: no cable for FT-4420-001',tag:'FT-4420-001',rule:'CS-NCS1A-002',disc:'Instrument',status:'Open',doc:'CS-NCS1A-002'},
+  {id:'INT-011',sev:'Major',type:'Interface',title:'PP–IN interface: valve CV not in instrument index',tag:'FV-4401',rule:'NORSOK I-005 §7.4',disc:'Piping',status:'Open',doc:'INSTR-INDEX-001'},
+  {id:'INT-012',sev:'Minor',type:'Interface',title:'EL–PP interface: trace heating circuit not in spec',tag:'HT-4420-003',rule:'NORSOK E-001 §8.2',disc:'Electrical',status:'Resolved',doc:'HT-SPEC-001'},
+];
+
+/* ─── severity helpers ─────────────────────────────────────── */
+const SEV_COLOR = {Critical:'var(--red)',Major:'var(--amber)',Minor:'var(--blue)'};
+const SEV_BG    = {Critical:'var(--red-bg)',Major:'var(--amber-bg)',Minor:'var(--blue-bg)'};
+const SEV_T     = {Critical:'var(--red-t)',Major:'var(--amber-t)',Minor:'var(--blue-t)'};
+const TYPE_BG   = {'Tag spec':'var(--red-bg)','P&ID':'var(--amber-bg)','Standards':'var(--purple-bg)','Interface':'var(--blue-bg)'};
+const TYPE_T    = {'Tag spec':'var(--red-t)','P&ID':'var(--amber-t)','Standards':'var(--purple-t)','Interface':'var(--blue-t)'};
+const DISC_BG   = {Electrical:'var(--blue-bg)',Instrument:'var(--purple-bg)',Piping:'var(--green-bg)',Process:'var(--amber-bg)'};
+const DISC_T    = {Electrical:'var(--blue-t)',Instrument:'var(--purple-t)',Piping:'var(--green-t)',Process:'var(--amber-t)'};
+const STAT_BG   = {Open:'var(--red-bg)','In review':'var(--amber-bg)',Resolved:'var(--green-bg)','NCR raised':'var(--purple-bg)'};
+const STAT_T    = {Open:'var(--red-t)','In review':'var(--amber-t)',Resolved:'var(--green-t)','NCR raised':'var(--purple-t)'};
+
+/* ─── state ────────────────────────────────────────────────── */
+let sortCol = '', sortDir = 1, groupBy = false;
+const selected = new Set();
+
+function getFiltered() {
+  const q   = document.getElementById('ftSearch').value.toLowerCase();
+  const sev = document.getElementById('ftSev').value;
+  const dsc = document.getElementById('ftDisc').value;
+  const typ = document.getElementById('ftType').value;
+  const sta = document.getElementById('ftStat').value;
+  return ROWS.filter(r =>
+    (!q   || Object.values(r).some(v => v.toLowerCase().includes(q))) &&
+    (!sev || r.sev === sev) &&
+    (!dsc || r.disc === dsc) &&
+    (!typ || r.type === typ) &&
+    (!sta || r.status === sta)
+  );
+}
+
+function pill(text, bg, t) {
+  return `<span class="disc-pill" style="background:${bg};color:${t}">${text}</span>`;
+}
+function statBadge(s) {
+  return `<span class="stat-badge" style="background:${STAT_BG[s]};color:${STAT_T[s]}">${s}</span>`;
+}
+
+function renderTable() {
+  const rows = getFiltered();
+  if (sortCol) rows.sort((a,b)=>{
+    const av=a[sortCol]||'', bv=b[sortCol]||'';
+    return av<bv ? -sortDir : av>bv ? sortDir : 0;
+  });
+
+  const tbody = document.getElementById('ftBody');
+  tbody.innerHTML = '';
+  document.getElementById('ftCount').textContent = `${rows.length} of ${ROWS.length} findings`;
+
+  if (groupBy) {
+    const groups = {};
+    rows.forEach(r => { (groups[r.type]||(groups[r.type]=[])).push(r); });
+    Object.entries(groups).forEach(([grp, grpRows]) => {
+      const gh = tbody.insertRow();
+      gh.className = 'group-header';
+      gh.insertCell(0).colSpan = 11;
+      gh.cells[0].textContent = `${grp} — ${grpRows.length} finding${grpRows.length!==1?'s':''}`;
+      grpRows.forEach(r => appendRow(tbody, r));
+    });
+  } else {
+    rows.forEach(r => appendRow(tbody, r));
+  }
+
+  // sync select-all checkbox
+  const visible = rows.filter(r=>selected.has(r.id));
+  document.getElementById('ftSelAll').checked = rows.length > 0 && visible.length === rows.length;
+  document.getElementById('ftBulkNcr').classList.toggle('visible', selected.size > 0);
+}
+
+function appendRow(tbody, r) {
+  const tr = tbody.insertRow();
+  if (selected.has(r.id)) tr.classList.add('selected');
+  tr.addEventListener('click', e => {
+    if (e.target.type === 'checkbox' || e.target.tagName === 'BUTTON') return;
+    tr.classList.toggle('selected');
+    selected[tr.classList.contains('selected') ? 'add' : 'delete'](r.id);
+    document.getElementById('ftBulkNcr').classList.toggle('visible', selected.size > 0);
+  });
+
+  const cb = document.createElement('input');
+  cb.type = 'checkbox'; cb.className = 'ft-cb'; cb.checked = selected.has(r.id);
+  cb.addEventListener('change', () => {
+    selected[cb.checked?'add':'delete'](r.id);
+    tr.classList.toggle('selected', cb.checked);
+    document.getElementById('ftBulkNcr').classList.toggle('visible', selected.size > 0);
+  });
+  tr.insertCell(0).appendChild(cb);
+
+  tr.insertCell(1).innerHTML = `<span style="font-family:monospace;font-size:10px;color:var(--t3)">${r.id}</span>`;
+  tr.insertCell(2).innerHTML = `<span class="sev-badge" style="background:${SEV_COLOR[r.sev]}"></span><span class="sev-label" style="color:${SEV_COLOR[r.sev]}">${r.sev}</span>`;
+  tr.insertCell(3).innerHTML = `<span class="type-pill" style="background:${TYPE_BG[r.type]};color:${TYPE_T[r.type]}">${r.type}</span>`;
+  tr.insertCell(4).innerHTML = `<span style="font-size:11px;font-weight:500;color:var(--t1)">${r.title}</span>`;
+  tr.insertCell(5).innerHTML = `<span style="font-family:monospace;font-size:10px;color:var(--t2)">${r.tag}</span>`;
+  tr.insertCell(6).innerHTML = `<span style="font-size:10px;color:var(--t3);font-family:monospace">${r.rule}</span>`;
+  tr.insertCell(7).innerHTML = pill(r.disc, DISC_BG[r.disc], DISC_T[r.disc]);
+  tr.insertCell(8).innerHTML = statBadge(r.status);
+  tr.insertCell(9).innerHTML = `<span style="font-size:10px;color:var(--t3)">${r.doc}</span>`;
+  tr.insertCell(10).innerHTML = `<div class="tbl-actions"><button class="tbl-btn res" onclick="event.stopPropagation()">Resolve</button><button class="tbl-btn ncr" onclick="event.stopPropagation()">NCR</button><button class="tbl-btn asn" onclick="event.stopPropagation()">Assign</button></div>`;
+}
+
+/* ─── sort on column header click ─────────────────────────── */
+document.querySelectorAll('.ft-table th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
+    document.querySelectorAll('.ft-table th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+    th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+    renderTable();
+  });
+});
+
+/* ─── controls ─────────────────────────────────────────────── */
+['ftSearch','ftSev','ftDisc','ftType','ftStat'].forEach(id =>
+  document.getElementById(id).addEventListener('input', renderTable)
+);
+document.getElementById('ftGroup').addEventListener('click', function(){
+  groupBy = !groupBy;
+  this.classList.toggle('active', groupBy);
+  this.textContent = groupBy ? 'Ungroup' : 'Group by type';
+  renderTable();
+});
+document.getElementById('ftSelAll').addEventListener('change', function(){
+  getFiltered().forEach(r => { selected[this.checked?'add':'delete'](r.id); });
+  renderTable();
+});
+document.getElementById('ftBulkNcr').addEventListener('click', () => {
+  alert(`NCR raised for ${selected.size} finding(s):\n${[...selected].join(', ')}`);
+  selected.clear(); renderTable();
+});
+document.getElementById('ftExport').addEventListener('click', () => {
+  const cols = ['id','sev','type','title','tag','rule','disc','status','doc'];
+  const csv  = [cols.join(','), ...getFiltered().map(r=>cols.map(c=>`"${r[c]}"`).join(','))].join('\n');
+  const a = Object.assign(document.createElement('a'),{href:'data:text/csv;charset=utf-8,'+encodeURIComponent(csv),download:'findings-export.csv'});
+  a.click();
+});
+
+/* ─── resize handle ────────────────────────────────────────── */
+(function(){
+  const handle  = document.getElementById('resizeHandle');
+  const upper   = document.querySelector('.centre-upper');
+  const panel   = document.getElementById('ftPanel');
+  let dragging = false, startY = 0, startH = 0;
+
+  handle.addEventListener('mousedown', e => {
+    dragging = true; startY = e.clientY; startH = upper.getBoundingClientRect().height;
+    handle.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const newH = Math.max(80, startH + e.clientY - startY);
+    upper.style.height = newH + 'px';
+    upper.style.flex   = 'none';
+  });
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.userSelect = '';
+  });
+})();
+
+/* ─── initial render ───────────────────────────────────────── */
+renderTable();
+</script>
+
 </body>
 </html>
