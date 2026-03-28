@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEDI FPSO — Master Equipment List</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg1:#ffffff;--bg2:#f7f6f2;--bg3:#f1efe8;
+  --t1:#2c2c2a;--t2:#5f5e5a;--t3:#888780;
+  --b2:rgba(44,44,42,.25);--b3:rgba(44,44,42,.12);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-t:#0C447C;
+  --green:#2E7D32;--green-bg:#EAF3DE;--green-t:#1B5E20;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#633806;
+  --red:#C62828;--red-bg:#FCEBEB;--red-t:#791F1F;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--purple-t:#26215C;
+  --teal:#00796B;--teal-bg:#E0F2F1;--teal-t:#004D40;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;color:var(--t1);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg1:#1e1e1c;--bg2:#252523;--bg3:#2c2c2a;
+    --t1:#e8e6dc;--t2:#a8a69e;--t3:#666660;
+    --b2:rgba(220,218,210,.2);--b3:rgba(220,218,210,.1);
+    --blue:#378ADD;--blue-bg:#042C53;--blue-t:#85B7EB;
+    --green:#66BB6A;--green-bg:#173404;--green-t:#C0DD97;
+    --amber:#EF9F27;--amber-bg:#412402;--amber-t:#FAC775;
+    --red:#EF5350;--red-bg:#501313;--red-t:#F09595;
+    --purple:#7F77DD;--purple-bg:#26215C;--purple-t:#CECBF6;
+    --teal:#26A69A;--teal-bg:#004D40;--teal-t:#80CBC4;
+  }
+}
+html,body{height:100%;background:var(--bg3);overflow:hidden}
+
+/* TOPBAR */
+.topbar{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:0 20px;height:48px;display:flex;align-items:center;gap:12px;flex-shrink:0;z-index:100;position:relative}
+.logo{font-size:15px;font-weight:600;letter-spacing:-.02em}
+.logo-sub{font-size:11px;color:var(--t3)}
+.spacer{flex:1}
+.tag{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.tag-blue{background:var(--blue-bg);color:var(--blue-t)}
+.tag-green{background:var(--green-bg);color:var(--green-t)}
+.tag-amber{background:var(--amber-bg);color:var(--amber-t)}
+
+/* LAYOUT */
+.app{display:flex;height:calc(100vh - 48px)}
+
+/* SIDEBAR */
+.sidebar{width:240px;flex-shrink:0;background:var(--bg2);border-right:0.5px solid var(--b3);overflow-y:auto;padding:16px 0}
+.sidebar-section{padding:0 12px;margin-bottom:4px}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:0 8px;margin-bottom:8px}
+.concept-card{padding:12px;border-radius:8px;cursor:pointer;border:1px solid transparent;margin-bottom:4px;transition:all .15s}
+.concept-card:hover{background:var(--bg1);border-color:var(--b3)}
+.concept-card.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-t)}
+.concept-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.concept-meta{font-size:11px;color:var(--t3);display:flex;flex-direction:column;gap:2px}
+.concept-card.active .concept-meta{color:var(--blue-t);opacity:.8}
+.stat-row{display:flex;justify-content:space-between;align-items:center}
+.stat-val{font-weight:600;font-size:12px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* FILTER BAR */
+.filter-bar{background:var(--bg1);border-bottom:0.5px solid var(--b3);padding:10px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.filter-bar input,.filter-bar select{background:var(--bg2);border:0.5px solid var(--b3);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--t1);outline:none;height:30px}
+.filter-bar input{width:220px}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--blue)}
+.btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--b3);background:var(--bg2);color:var(--t1);height:30px;transition:all .1s}
+.btn:hover{background:var(--bg1);border-color:var(--b2)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{opacity:.9}
+.toggle-alts{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}
+
+/* SUMMARY STATS */
+.summary-bar{padding:12px 20px;display:flex;gap:16px;border-bottom:0.5px solid var(--b3);background:var(--bg1);flex-shrink:0}
+.summary-item{display:flex;flex-direction:column;gap:2px}
+.summary-num{font-size:20px;font-weight:600;line-height:1}
+.summary-lbl{font-size:10px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.summary-divider{width:0.5px;background:var(--b3);align-self:stretch}
+
+/* TABLE */
+.table-wrap{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse}
+thead{position:sticky;top:0;z-index:10}
+th{background:var(--bg2);border-bottom:0.5px solid var(--b3);padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--t1)}
+th .sort-icon{margin-left:4px;opacity:.4}
+th.sorted .sort-icon{opacity:1;color:var(--blue)}
+td{padding:8px 12px;border-bottom:0.5px solid var(--b3);vertical-align:middle;font-size:12px}
+tr:hover td{background:var(--bg2)}
+.tag-no{font-family:'SF Mono',monospace;font-size:11px;color:var(--t2);white-space:nowrap}
+.equip-name{font-weight:500;color:var(--t1)}
+.equip-func{color:var(--t2);font-size:11px}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.pill-process{background:var(--blue-bg);color:var(--blue-t)}
+.pill-mechanical{background:var(--purple-bg);color:var(--purple-t)}
+.pill-electrical{background:var(--amber-bg);color:var(--amber-t)}
+.pill-instrument{background:var(--teal-bg);color:var(--teal-t)}
+.pill-structural{background:rgba(100,100,90,.1);color:var(--t2)}
+.pill-package{background:var(--green-bg);color:var(--green-t)}
+.pill-confirmed{background:var(--green-bg);color:var(--green-t)}
+.pill-review{background:var(--amber-bg);color:var(--amber-t)}
+.pill-tbc{background:var(--red-bg);color:var(--red-t)}
+.pill-concept{background:var(--bg2);color:var(--t3);border:0.5px solid var(--b3)}
+
+/* ALT BADGE */
+.alt-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;background:var(--blue-bg);color:var(--blue-t);cursor:pointer;border:none;transition:all .1s}
+.alt-badge:hover{background:var(--blue);color:#fff}
+.no-alt{font-size:11px;color:var(--t3)}
+.capex-cell{font-weight:600;color:var(--t1);text-align:right}
+.lead-cell{color:var(--t2);text-align:right}
+
+/* ALTERNATIVES PANEL */
+.alt-panel{position:fixed;right:0;top:48px;bottom:0;width:480px;background:var(--bg1);border-left:0.5px solid var(--b3);box-shadow:-8px 0 24px rgba(0,0,0,.1);transform:translateX(100%);transition:transform .25s ease;z-index:200;display:flex;flex-direction:column}
+.alt-panel.open{transform:translateX(0)}
+.alt-header{padding:16px 20px;border-bottom:0.5px solid var(--b3);display:flex;align-items:flex-start;gap:12px}
+.alt-title{font-size:14px;font-weight:600;flex:1}
+.alt-subtitle{font-size:11px;color:var(--t3);margin-top:2px}
+.close-btn{width:28px;height:28px;border-radius:6px;border:0.5px solid var(--b3);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:16px;flex-shrink:0}
+.close-btn:hover{background:var(--red-bg);color:var(--red)}
+.alt-body{flex:1;overflow-y:auto;padding:16px 20px}
+.alt-option{background:var(--bg2);border:0.5px solid var(--b3);border-radius:10px;padding:14px;margin-bottom:12px}
+.alt-opt-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.alt-opt-label{font-size:13px;font-weight:600}
+.alt-opt-vendor{font-size:11px;color:var(--t3)}
+.alt-opt-rec.preferred{background:var(--green-bg);color:var(--green-t)}
+.alt-opt-rec.viable{background:var(--amber-bg);color:var(--amber-t)}
+.alt-opt-rec.not-rec{background:var(--red-bg);color:var(--red-t)}
+.alt-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.alt-metric{text-align:center}
+.alt-metric-val{font-size:16px;font-weight:700;line-height:1}
+.alt-metric-lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.capex-low{color:var(--green)}
+.capex-mid{color:var(--amber)}
+.capex-high{color:var(--red)}
+.alt-note{font-size:11px;color:var(--t2);margin-top:8px;line-height:1.5;padding-top:8px;border-top:0.5px solid var(--b3)}
+.radar-wrap{display:flex;justify-content:center;margin:10px 0}
+.overlay{position:fixed;inset:0;z-index:150;background:transparent}
+
+/* AREA HEADER ROW */
+.area-header td{background:var(--bg3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);padding:6px 12px;border-bottom:0.5px solid var(--b3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="logo">JEDI FPSO</div>
+    <div class="logo-sub">Master Equipment List · CFIHOS / IMF</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="tag tag-blue" id="active-concept-tag">C1 – Spread Moored</span>
+  <span class="tag tag-green">Orange Basin · 2,500m WD</span>
+  <span class="tag tag-amber">Conceptual Phase</span>
+</div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Design Concepts</div>
+      <div class="concept-card active" onclick="selectConcept(0)" id="c0">
+        <div class="concept-name">C1 – Spread Moored FPSO</div>
+        <div class="concept-meta">
+          <div class="stat-row"><span>Equipment</span><span class="stat-val" id="c0-eq">82</span></div>
+          <div class="stat-row"><span>CAPEX</span><span class="stat-val" id="c0-capex">$2.1B</span></div>
+          <div class="stat-row"><span>Schedule</span><span class="stat-val">54 mo</span></div>
+        </div>
+      </div>
+      <div class="concept-card" onclick="selectConcept(1)" id="c1">
+        <div class="concept-name">C2 – Turret Moored FPSO</div>
+        <div class="concept-meta">
+          <div class="stat-row"><span>Equipment</span><span class="stat-val" id="c1-eq">86</span></div>
+          <div class="stat-row"><span>CAPEX</span><span class="stat-val" id="c1-capex">$2.4B</span></div>
+          <div class="stat-row"><span>Schedule</span><span class="stat-val">48 mo</span></div>
+        </div>
+      </div>
+      <div class="concept-card" onclick="selectConcept(2)" id="c2">
+        <div class="concept-name">C3 – CALM Buoy Offloading</div>
+        <div class="concept-meta">
+          <div class="stat-row"><span>Equipment</span><span class="stat-val" id="c2-eq">78</span></div>
+          <div class="stat-row"><span>CAPEX</span><span class="stat-val" id="c2-capex">$1.85B</span></div>
+          <div class="stat-row"><span>Schedule</span><span class="stat-val">60 mo</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <input type="text" id="search" placeholder="Search tag, equipment, function…" oninput="applyFilters()">
+      <select id="area-filter" onchange="applyFilters()">
+        <option value="">All Areas</option>
+        <option value="PRO">Production & Separation</option>
+        <option value="GAS">Gas Handling</option>
+        <option value="GNJ">Gas Injection</option>
+        <option value="EXP">Crude Export</option>
+        <option value="UTL">Utilities</option>
+        <option value="FGS">Fuel Gas</option>
+        <option value="CHM">Chemical Injection</option>
+        <option value="FLR">Flare & Relief</option>
+        <option value="MAR">Marine / Ballast</option>
+        <option value="SAF">Safety</option>
+      </select>
+      <select id="status-filter" onchange="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Under Review">Under Review</option>
+        <option value="TBC">TBC</option>
+        <option value="Concept">Concept</option>
+      </select>
+      <select id="class-filter" onchange="applyFilters()">
+        <option value="">All Classes</option>
+        <option value="Separator">Separator</option>
+        <option value="Compressor">Compressor</option>
+        <option value="Pump">Pump</option>
+        <option value="Heat Exchanger">Heat Exchanger</option>
+        <option value="Package">Package</option>
+        <option value="Vessel">Vessel</option>
+        <option value="Generator">Generator</option>
+        <option value="Air Cooler">Air Cooler</option>
+        <option value="Metering">Metering</option>
+        <option value="Flare">Flare</option>
+        <option value="Filter">Filter</option>
+        <option value="Heater">Heater</option>
+      </select>
+      <label class="toggle-alts">
+        <input type="checkbox" id="alts-only" onchange="applyFilters()"> Has alternatives
+      </label>
+      <div class="spacer"></div>
+      <button class="btn btn-primary" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+
+    <!-- SUMMARY BAR -->
+    <div class="summary-bar">
+      <div class="summary-item">
+        <div class="summary-num" id="stat-total">0</div>
+        <div class="summary-lbl">Equipment</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <div class="summary-num" id="stat-capex">0</div>
+        <div class="summary-lbl">Total CAPEX (MUSD)</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <div class="summary-num" id="stat-review">0</div>
+        <div class="summary-lbl">Under Review</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <div class="summary-num" id="stat-tbc">0</div>
+        <div class="summary-lbl">TBC</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <div class="summary-num" id="stat-alts">0</div>
+        <div class="summary-lbl">With Alternatives</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <div class="summary-num" id="stat-lead">0</div>
+        <div class="summary-lbl">Avg Lead (wks)</div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('tag')" id="th-tag">Tag No. <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('class')" id="th-class">CFIHOS Class <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('name')" id="th-name">Equipment <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('service')" id="th-service">Service / Duty <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('area')" id="th-area">Area <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('status')" id="th-status">Status <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('capex')" id="th-capex" style="text-align:right">CAPEX MUSD <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('lead')" id="th-lead" style="text-align:right">Lead (wks) <span class="sort-icon">↕</span></th>
+            <th>Alternatives</th>
+          </tr>
+        </thead>
+        <tbody id="mel-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ALTERNATIVES PANEL -->
+<div class="alt-panel" id="alt-panel">
+  <div class="alt-header">
+    <div>
+      <div class="alt-title" id="alt-title">Alternative Equipment</div>
+      <div class="alt-subtitle" id="alt-subtitle">Time / Cost / Quality comparison</div>
+    </div>
+    <button class="close-btn" onclick="closePanel()">✕</button>
+  </div>
+  <div class="alt-body" id="alt-body"></div>
+</div>
+<div class="overlay" id="overlay" onclick="closePanel()" style="display:none"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const AREAS = {
+  PRO:'Production & Separation',GAS:'Gas Handling & Compression',
+  GNJ:'Gas Injection / Gas Lift',EXP:'Crude Export',UTL:'Utilities',
+  FGS:'Fuel Gas System',CHM:'Chemical Injection',FLR:'Flare & Relief',
+  MAR:'Marine / Ballast',SAF:'Safety / Firefighting'
+};
+
+// Base MEL from AKE-25 with CAPEX/Lead enrichment
+// Format: [tag, class, name, service, area, capex_c1, lead_c1, alts_key]
+const BASE_MEL = [
+  // PRO
+  ['JD-PRO-SEP-001','Separator','Production Manifold Inlet Separator','Wellstream inlet, slug catching','PRO',8.2,60,'sep-inlet'],
+  ['JD-PRO-SEP-002','Separator','Test Separator','Individual well testing, 3-phase','PRO',4.1,48,'sep-test'],
+  ['JD-PRO-SEP-003','Separator','1st Stage HP Production Separator','HP separation, wellstream','PRO',9.8,64,'sep-hp'],
+  ['JD-PRO-SEP-004','Separator','2nd Stage MP Production Separator','MP separation, degassing','PRO',7.2,56,'sep-mp'],
+  ['JD-PRO-SEP-005','Separator','3rd Stage LP Production Separator','LP separation / stabilisation','PRO',5.6,52,'sep-lp'],
+  ['JD-PRO-VES-001','Vessel','Electrostatic Coalescer','Crude dehydration / desalting','PRO',11.4,68,'coalescer'],
+  ['JD-PRO-VES-002','Vessel','Produced Water Flash Vessel','Produced water degassing','PRO',2.1,32,''],
+  ['JD-PRO-HYD-001','Package','Produced Water Hydrocyclone Package','Oil-in-water reduction','PRO',3.8,36,'hydrocyclone'],
+  ['JD-PRO-CFU-001','Package','Compact Flotation Unit (CFU)','Produced water polishing','PRO',5.2,44,'cfu'],
+  ['JD-PRO-VES-003','Vessel','Slop/Drain Vessel','Closed drain recovery','PRO',1.4,28,''],
+  // GAS
+  ['JD-GAS-KOD-001','Vessel','LP Compressor Suction Scrubber','KO drum, LP compressor protection','GAS',1.8,28,''],
+  ['JD-GAS-CMP-001','Compressor','LP Stage Gas Compressor','Associated gas, LP compression','GAS',14.5,72,'cmp-lp'],
+  ['JD-GAS-CLR-001','Air Cooler','LP Gas Aftercooler','Inter/aftercooling LP stage','GAS',2.4,36,''],
+  ['JD-GAS-KOD-002','Vessel','MP Compressor Suction Scrubber','KO drum, MP compressor protection','GAS',1.8,28,''],
+  ['JD-GAS-CMP-002','Compressor','MP Stage Gas Compressor','Associated gas, MP compression','GAS',16.8,78,'cmp-mp'],
+  ['JD-GAS-CLR-002','Air Cooler','MP Gas Aftercooler','Inter/aftercooling MP stage','GAS',2.6,36,''],
+  ['JD-GAS-KOD-003','Vessel','HP Compressor Suction Scrubber','KO drum, HP compressor protection','GAS',1.9,28,''],
+  ['JD-GAS-CMP-003','Compressor','HP Stage Gas Compressor','HP compression / export','GAS',22.4,84,'cmp-hp'],
+  ['JD-GAS-CLR-003','Air Cooler','HP Gas Aftercooler','Final stage cooling','GAS',2.8,40,''],
+  ['JD-GAS-MET-001','Metering','Gas Export Metering Skid','Fiscal gas metering','GAS',3.6,44,'gas-meter'],
+  // GNJ
+  ['JD-GNJ-KOD-001','Vessel','Gas Injection Suction Scrubber','KO drum protection','GNJ',2.1,28,''],
+  ['JD-GNJ-CMP-001A','Compressor','Gas Injection Compressor — Train A','Reservoir pressure maintenance','GNJ',19.5,80,'ginj-cmp'],
+  ['JD-GNJ-CMP-001B','Compressor','Gas Injection Compressor — Train B','Reservoir pressure maintenance','GNJ',19.5,80,'ginj-cmp'],
+  ['JD-GNJ-MET-001','Metering','Gas Injection / Lift Metering','Allocation metering','GNJ',2.4,40,''],
+  // EXP
+  ['JD-EXP-PMP-001A','Pump','Crude Oil Export Pump — A','Crude oil cargo offloading','EXP',4.8,52,'crude-pump'],
+  ['JD-EXP-PMP-001B','Pump','Crude Oil Export Pump — B','Spare / parallel offloading','EXP',4.8,52,'crude-pump'],
+  ['JD-EXP-FLT-001','Filter','Crude Export Strainer','Protection of export pumps','EXP',0.6,24,''],
+  ['JD-EXP-MET-001','Metering','Crude Oil Fiscal Metering Skid','Fiscal crude oil metering','EXP',4.2,48,'crude-meter'],
+  // UTL
+  ['JD-UTL-GTG-001A','Gas Turbine Generator','Main Power Generator — A','Main power generation','UTL',18.5,76,'gtg'],
+  ['JD-UTL-GTG-001B','Gas Turbine Generator','Main Power Generator — B','Main power generation','UTL',18.5,76,'gtg'],
+  ['JD-UTL-GTG-001C','Gas Turbine Generator','Main Power Generator — C','Standby / peak shaving','UTL',18.5,76,'gtg'],
+  ['JD-UTL-GEN-002','Generator','Emergency Diesel Generator','Emergency power','UTL',2.2,32,'emerg-gen'],
+  ['JD-UTL-PMP-001A','Pump','Seawater Lift Pump — A','Cooling water supply','UTL',1.8,36,'sw-pump'],
+  ['JD-UTL-PMP-001B','Pump','Seawater Lift Pump — B','Cooling water supply (standby)','UTL',1.8,36,'sw-pump'],
+  ['JD-UTL-FLT-001','Filter','Seawater Intake Filter','Protection of cooling system','UTL',0.9,28,''],
+  ['JD-UTL-HEX-001A','Heat Exchanger','Closed Cooling Water Cooler — A','Heat rejection to seawater','UTL',2.4,40,'ccw-cooler'],
+  ['JD-UTL-HEX-001B','Heat Exchanger','Closed Cooling Water Cooler — B','Standby','UTL',2.4,40,'ccw-cooler'],
+  ['JD-UTL-PMP-002A','Pump','Cooling Medium Circulation Pump — A','Closed cooling water loop','UTL',1.2,32,''],
+  ['JD-UTL-PMP-002B','Pump','Cooling Medium Circulation Pump — B','Standby','UTL',1.2,32,''],
+  ['JD-UTL-VES-001','Vessel','Cooling Water Expansion Vessel','Closed loop pressure control','UTL',0.5,24,''],
+  ['JD-UTL-CMP-001A','Compressor','Instrument Air Compressor — A','Instrument air supply','UTL',0.8,28,''],
+  ['JD-UTL-CMP-001B','Compressor','Instrument Air Compressor — B','Standby','UTL',0.8,28,''],
+  ['JD-UTL-DRY-001','Package','Instrument Air Dryer','Air drying / desiccant','UTL',0.4,20,''],
+  ['JD-UTL-VES-002','Vessel','Instrument Air Receiver','Air storage buffer','UTL',0.3,16,''],
+  ['JD-UTL-NIT-001','Package','Nitrogen Generation Package','N₂ supply (blanketing, purge)','UTL',1.6,32,'n2-pkg'],
+  ['JD-UTL-PKG-001','Package','Potable Water Treatment Unit','Potable water supply','UTL',0.9,28,''],
+  ['JD-UTL-PKG-002','Package','Sewage Treatment Unit','Black/grey water treatment','UTL',0.7,24,''],
+  // FGS
+  ['JD-FGS-SEP-001','Separator','Fuel Gas Scrubber','Gas cleaning for turbines','FGS',1.4,28,''],
+  ['JD-FGS-HTR-001','Heater','Fuel Gas Heater','Superheating fuel gas','FGS',0.8,24,''],
+  ['JD-FGS-VES-001','Vessel','Fuel Gas Buffer Vessel','Pressure buffering, surges','FGS',0.6,20,''],
+  ['JD-FGS-VES-002','Vessel','Diesel Day Tank','Diesel fuel for emergency gen','FGS',0.3,16,''],
+  // CHM
+  ['JD-CHM-PKG-001','Package','Corrosion Inhibitor Injection Package','Flow assurance — corrosion','CHM',1.2,32,'corr-inh'],
+  ['JD-CHM-PKG-002','Package','Scale Inhibitor Injection Package','Flow assurance — scaling','CHM',1.2,32,''],
+  ['JD-CHM-PKG-003','Package','Demulsifier Injection Package','Crude dehydration aid','CHM',1.0,28,''],
+  ['JD-CHM-PKG-004','Package','Biocide Injection Package','Microbiological control','CHM',0.8,24,''],
+  ['JD-CHM-PKG-005','Package','MEG/Methanol Injection Package','Hydrate inhibition (subsea)','CHM',2.8,40,'meg-pkg'],
+  ['JD-CHM-PKG-006','Package','Oxygen Scavenger Injection Package','Seawater injection treatment','CHM',0.6,20,''],
+  // FLR
+  ['JD-FLR-KOD-001','Vessel','HP Flare KO Drum','Liquid dropout — HP flare header','FLR',2.2,32,''],
+  ['JD-FLR-KOD-002','Vessel','LP Flare KO Drum','Liquid dropout — LP flare header','FLR',1.8,28,''],
+  ['JD-FLR-PMP-001A','Pump','Flare KO Drum Pump — A','Liquid recovery from KO drums','FLR',0.6,24,''],
+  ['JD-FLR-PMP-001B','Pump','Flare KO Drum Pump — B','Standby','FLR',0.6,24,''],
+  ['JD-FLR-STK-001','Flare','HP Flare Stack & Tip','HP gas combustion','FLR',4.8,52,'flare-hp'],
+  ['JD-FLR-STK-002','Flare','LP Flare Stack & Tip','LP gas combustion','FLR',3.6,44,''],
+  // MAR
+  ['JD-MAR-PMP-001A','Pump','Ballast Pump — A','Ballast water loading/discharge','MAR',1.4,32,''],
+  ['JD-MAR-PMP-001B','Pump','Ballast Pump — B','Standby','MAR',1.4,32,''],
+  ['JD-MAR-PMP-002A','Pump','Bilge Pump — A','Bilge water collection','MAR',0.5,20,''],
+  ['JD-MAR-PMP-002B','Pump','Bilge Pump — B','Standby','MAR',0.5,20,''],
+  ['JD-MAR-FLT-001','Filter','Ballast Water Treatment System','IMO BWMC compliance','MAR',3.2,48,'bwts'],
+  ['JD-MAR-PKG-001','Package','Oil Water Separator (Bilge)','MARPOL compliance','MAR',0.8,28,''],
+  // SAF
+  ['JD-SAF-PMP-001A','Pump','Firewater Main Pump — A','Firewater ring main supply','SAF',2.4,40,'fw-pump'],
+  ['JD-SAF-PMP-001B','Pump','Firewater Main Pump — B','Standby','SAF',2.4,40,'fw-pump'],
+  ['JD-SAF-PMP-001C','Pump','Firewater Main Pump — C','Standby / electric','SAF',2.2,36,'fw-pump'],
+  ['JD-SAF-PMP-002A','Pump','Jockey / Pressure Maintenance Pump — A','Firewater ring pressure','SAF',0.4,20,''],
+  ['JD-SAF-PMP-002B','Pump','Jockey / Pressure Maintenance Pump — B','Standby','SAF',0.4,20,''],
+  ['JD-SAF-VES-001','Vessel','Foam Concentrate Storage Tank','AFFF supply to foam systems','SAF',0.6,24,''],
+  ['JD-SAF-PKG-001','Package','Foam Proportioning System','Fixed foam system (process area)','SAF',1.8,32,''],
+  ['JD-SAF-PKG-002','Package','CO₂ Fixed Suppression System','Machinery spaces (gas turbines)','SAF',2.6,36,''],
+  ['JD-SAF-PKG-003','Package','Deluge System — Process Module','Deluge/water spray (process area)','SAF',3.4,40,''],
+  ['JD-SAF-PKG-004','Package','Deluge System — FPSO Sides','External hull protection','SAF',2.2,32,''],
+  ['JD-SAF-PKG-005','Package','F&G Detection System','Fire & gas detection','SAF',4.8,48,'fng'],
+  ['JD-SAF-PKG-006','Package','Lifesaving Appliances (LSA)','Lifeboats, rescue boat, rafts','SAF',3.2,36,''],
+];
+
+// Concept multipliers [capex_mult, lead_mult, status_bias]
+// C1: baseline, C2: higher CAPEX, shorter lead (turret premium), C3: lower CAPEX, longer lead, more TBC
+const CONCEPTS = [
+  {name:'C1 – Spread Moored FPSO', capex:1.0, lead:1.0, statusBias:0},
+  {name:'C2 – Turret Moored FPSO', capex:1.15, lead:0.92, statusBias:1},
+  {name:'C3 – CALM Buoy Offloading', capex:0.88, lead:1.12, statusBias:2},
+];
+
+// Deterministic status assignment per concept
+function getStatus(idx, area, concept) {
+  const b = concept.statusBias;
+  const key = (idx + area.charCodeAt(0)) % 7;
+  if (b === 0) { // C1: mostly Concept, some Under Review
+    if (key < 5) return 'Concept';
+    if (key === 5) return 'Under Review';
+    return 'TBC';
+  } else if (b === 1) { // C2: more Confirmed/Under Review
+    if (key < 3) return 'Concept';
+    if (key < 5) return 'Under Review';
+    if (key === 5) return 'Confirmed';
+    return 'TBC';
+  } else { // C3: more TBC
+    if (key < 3) return 'Concept';
+    if (key < 4) return 'Under Review';
+    if (key < 6) return 'TBC';
+    return 'Concept';
+  }
+}
+
+// Build concept datasets
+function buildConceptData(cIdx) {
+  return BASE_MEL.map((row, i) => {
+    const c = CONCEPTS[cIdx];
+    const capex = Math.round(row[5] * c.capex * 10) / 10;
+    const lead = Math.round(row[6] * c.lead);
+    const status = getStatus(i, row[4], c);
+    return {
+      tag: row[0], cls: row[1], name: row[2], service: row[3],
+      area: row[4], capex, lead, status, altsKey: row[7]
+    };
+  });
+}
+
+const DATASETS = [0,1,2].map(buildConceptData);
+
+// Alternative equipment data
+const ALTS = {
+  'sep-inlet': {
+    func:'Wellstream Inlet Separation', equip:'Production Manifold Inlet Separator',
+    options:[
+      {label:'Option A',vendor:'TechnipFMC',model:'CompactSep CS-400',capex:8.2,lead:60,quality:8.5,rec:'preferred',notes:'Compact footprint, proven HP deepwater. Preferred for CAPEX-optimised layouts.'},
+      {label:'Option B',vendor:'Aker Solutions',model:'AkerSep 3-phase HP',capex:9.4,lead:56,quality:9.0,rec:'viable',notes:'Higher CAPEX but excellent track record on NCS. Shorter delivery.'},
+      {label:'Option C',vendor:'Cameron (SLB)',model:'HC-Separator Series 4',capex:7.6,lead:68,quality:7.8,rec:'viable',notes:'Competitive CAPEX; longer lead time is a concern for schedule-driven concepts.'},
+    ]
+  },
+  'sep-test': {
+    func:'Individual Well Testing', equip:'Test Separator',
+    options:[
+      {label:'Option A',vendor:'TechnipFMC',model:'WellTest TS-150',capex:4.1,lead:48,quality:8.2,rec:'preferred',notes:'Modular, skid-mounted. Standard fit-for-purpose well test separator.'},
+      {label:'Option B',vendor:'Sulzer',model:'TS-3P Heavy Duty',capex:4.8,lead:44,quality:8.8,rec:'viable',notes:'Premium quality, slightly higher cost. Good for high-GOR wells.'},
+    ]
+  },
+  'sep-hp': {
+    func:'HP Oil/Gas Separation', equip:'1st Stage HP Production Separator',
+    options:[
+      {label:'Option A',vendor:'Aker Solutions',model:'ProSep HP-1000',capex:9.8,lead:64,quality:9.1,rec:'preferred',notes:'Established HP design, full NCS compliance. Preferred.'},
+      {label:'Option B',vendor:'TechnipFMC',model:'TOPS HP Series',capex:10.4,lead:60,quality:9.3,rec:'viable',notes:'Slightly higher CAPEX but fastest delivery in class.'},
+      {label:'Option C',vendor:'Exterran',model:'HPS-900',capex:8.9,lead:72,quality:8.2,rec:'viable',notes:'Lower cost but longer schedule — risk for C2.'},
+    ]
+  },
+  'sep-mp': { func:'MP Separation', equip:'MP Production Separator',
+    options:[
+      {label:'Option A',vendor:'Aker Solutions',model:'ProSep MP-800',capex:7.2,lead:56,quality:8.9,rec:'preferred',notes:'Paired with HP separator for consistent vendor.'},
+      {label:'Option B',vendor:'Cameron (SLB)',model:'HC-MP-500',capex:6.8,lead:60,quality:8.4,rec:'viable',notes:'Cost saving vs Option A.'},
+    ]
+  },
+  'sep-lp': { func:'LP Separation', equip:'LP Production Separator',
+    options:[
+      {label:'Option A',vendor:'Aker Solutions',model:'ProSep LP-600',capex:5.6,lead:52,quality:8.8,rec:'preferred',notes:'Completes 3-stage train.'},
+      {label:'Option B',vendor:'TechnipFMC',model:'TOPS LP',capex:5.1,lead:56,quality:8.3,rec:'viable',notes:'Lower cost option.'},
+    ]
+  },
+  'coalescer': { func:'Crude Dehydration / Desalting', equip:'Electrostatic Coalescer',
+    options:[
+      {label:'Option A',vendor:'Cameron (SLB)',model:'VIEC Coalescer',capex:11.4,lead:68,quality:9.2,rec:'preferred',notes:'Vessel-Internal Electrostatic Coalescer — best-in-class dehydration.'},
+      {label:'Option B',vendor:'Aker Solutions',model:'EC-HV Series',capex:12.1,lead:64,quality:9.4,rec:'viable',notes:'Higher voltage alternative — premium quality, +6% CAPEX.'},
+      {label:'Option C',vendor:'Frames Process Systems',model:'FC-Coalescer',capex:10.2,lead:76,quality:8.5,rec:'viable',notes:'Lower cost; longer schedule risk.'},
+    ]
+  },
+  'hydrocyclone': { func:'Oil-in-Water Reduction', equip:'Produced Water Hydrocyclone Package',
+    options:[
+      {label:'Option A',vendor:'Vortoil (SLB)',model:'HydroClean HC-500',capex:3.8,lead:36,quality:8.6,rec:'preferred',notes:'Compact, no power consumption. Industry standard.'},
+      {label:'Option B',vendor:'Aker Solutions',model:'AkerCyclone PW',capex:4.2,lead:32,quality:8.9,rec:'viable',notes:'Higher capacity variant for high water cut scenarios.'},
+      {label:'Option C',vendor:'Frames',model:'PWC-Compact',capex:3.4,lead:40,quality:8.0,rec:'viable',notes:'Budget option; slightly lower oil removal efficiency.'},
+    ]
+  },
+  'cfu': { func:'Produced Water Polishing', equip:'Compact Flotation Unit',
+    options:[
+      {label:'Option A',vendor:'Sulzer',model:'CFU-400 IGF',capex:5.2,lead:44,quality:8.8,rec:'preferred',notes:'Induced gas flotation — proven offshore. Preferred.'},
+      {label:'Option B',vendor:'Frames',model:'CFTF Series',capex:4.8,lead:48,quality:8.3,rec:'viable',notes:'Lower CAPEX; slightly longer delivery.'},
+    ]
+  },
+  'cmp-lp': { func:'LP Gas Compression', equip:'LP Stage Gas Compressor',
+    options:[
+      {label:'Option A',vendor:'Baker Hughes',model:'BCL-series Centrifugal',capex:14.5,lead:72,quality:8.9,rec:'preferred',notes:'Centrifugal compressor with DGS. Low maintenance, high availability.'},
+      {label:'Option B',vendor:'MAN Energy Solutions',model:'RG-Centrifugal',capex:13.8,lead:76,quality:8.7,rec:'viable',notes:'Competitive CAPEX; slightly longer delivery.'},
+      {label:'Option C',vendor:'Siemens Energy',model:'STC-SV Screw',capex:11.2,lead:64,quality:7.8,rec:'viable',notes:'Screw compressor — lower cost, higher maintenance.'},
+    ]
+  },
+  'cmp-mp': { func:'MP Gas Compression', equip:'MP Stage Gas Compressor',
+    options:[
+      {label:'Option A',vendor:'Baker Hughes',model:'BCL-MP Series',capex:16.8,lead:78,quality:9.1,rec:'preferred',notes:'Matching LP compressor vendor — reduced integration risk.'},
+      {label:'Option B',vendor:'MAN Energy Solutions',model:'RG-MP',capex:15.9,lead:80,quality:8.8,rec:'viable',notes:'Good alternative; competitive on total cost of ownership.'},
+      {label:'Option C',vendor:'Atlas Copco',model:'GT centrifugal',capex:14.4,lead:84,quality:8.2,rec:'not-rec',notes:'Longer delivery; less offshore track record at this pressure rating.'},
+    ]
+  },
+  'cmp-hp': { func:'HP Gas Compression / Export', equip:'HP Stage Gas Compressor',
+    options:[
+      {label:'Option A',vendor:'Baker Hughes',model:'BCL-HP Series',capex:22.4,lead:84,quality:9.3,rec:'preferred',notes:'Industry leading HP centrifugal. Full API 617 compliant.'},
+      {label:'Option B',vendor:'Siemens Energy',model:'STC-GV HP',capex:21.6,lead:88,quality:9.1,rec:'viable',notes:'Slightly lower CAPEX; marginally longer delivery.'},
+      {label:'Option C',vendor:'MAN Energy Solutions',model:'HOFIM HP',capex:23.8,lead:80,quality:9.4,rec:'viable',notes:'Highest quality; highest cost. Consider for C2 turret concept.'},
+    ]
+  },
+  'ginj-cmp': { func:'Gas Injection / Reservoir Management', equip:'Gas Injection Compressor',
+    options:[
+      {label:'Option A',vendor:'Baker Hughes',model:'BCL-GI Series (Recip)',capex:19.5,lead:80,quality:9.0,rec:'preferred',notes:'High differential pressure reciprocating variant.'},
+      {label:'Option B',vendor:'Siemens Energy',model:'STC-SH Centrifugal',capex:20.2,lead:76,quality:9.2,rec:'viable',notes:'Centrifugal — lower maintenance if flow is stable.'},
+      {label:'Option C',vendor:'Ariel Corporation',model:'JGZ Reciprocating',capex:17.8,lead:84,quality:8.6,rec:'viable',notes:'Cost-effective reciprocating; industry standard for gas injection.'},
+    ]
+  },
+  'crude-pump': { func:'Crude Oil Export', equip:'Crude Oil Export Pump',
+    options:[
+      {label:'Option A',vendor:'Sulzer',model:'BB-HR 5-stage',capex:4.8,lead:52,quality:8.7,rec:'preferred',notes:'High-reliability 5-stage centrifugal. Proven deepwater export.'},
+      {label:'Option B',vendor:'Baker Hughes',model:'MMEP Series',capex:5.2,lead:48,quality:9.0,rec:'viable',notes:'Motor-mounted electric pump; shorter delivery.'},
+    ]
+  },
+  'crude-meter': { func:'Fiscal Crude Oil Metering', equip:'Crude Oil Fiscal Metering Skid',
+    options:[
+      {label:'Option A',vendor:'Emerson',model:'Coriolis FlowMeter Suite',capex:4.2,lead:48,quality:9.2,rec:'preferred',notes:'Coriolis-based fiscal metering — highest accuracy.'},
+      {label:'Option B',vendor:'Honeywell',model:'Enraf Fiscal Turbine',capex:3.8,lead:44,quality:8.7,rec:'viable',notes:'Turbine-based — cost-effective, good long-term track record.'},
+      {label:'Option C',vendor:'Cameron (SLB)',model:'Nuflo Ultrasonic',capex:4.6,lead:52,quality:9.0,rec:'viable',notes:'Ultrasonic — no moving parts; slightly higher CAPEX.'},
+    ]
+  },
+  'gas-meter': { func:'Fiscal Gas Metering', equip:'Gas Export Metering Skid',
+    options:[
+      {label:'Option A',vendor:'Emerson',model:'Daniel Ultrasonic Gas',capex:3.6,lead:44,quality:9.3,rec:'preferred',notes:'Multipath ultrasonic — AGA 9 compliant.'},
+      {label:'Option B',vendor:'Honeywell',model:'Elster Ultrasonic',capex:3.3,lead:40,quality:8.9,rec:'viable',notes:'Competitive alternative; slightly lower accuracy spec.'},
+    ]
+  },
+  'gtg': { func:'Main Power Generation', equip:'Gas Turbine Generator',
+    options:[
+      {label:'Option A',vendor:'GE Vernova',model:'LM2500+G4 (30 MW)',capex:18.5,lead:76,quality:9.2,rec:'preferred',notes:'Industry-leading aero-derivative. Dual-fuel. Best power density.'},
+      {label:'Option B',vendor:'Siemens Energy',model:'SGT-A35 (34 MW)',capex:19.8,lead:72,quality:9.4,rec:'viable',notes:'Higher power output; slightly higher CAPEX. Better for C2 higher demand.'},
+      {label:'Option C',vendor:'Wartsila',model:'W50SG Dual Fuel',capex:16.2,lead:80,quality:8.6,rec:'viable',notes:'Reciprocating genset — lower CAPEX but higher maintenance intensity.'},
+      {label:'Option D',vendor:'MAN Energy Solutions',model:'48/60CR',capex:15.8,lead:84,quality:8.4,rec:'not-rec',notes:'Low CAPEX but long lead and high OPEX — not recommended at this scale.'},
+    ]
+  },
+  'emerg-gen': { func:'Emergency Power', equip:'Emergency Diesel Generator',
+    options:[
+      {label:'Option A',vendor:'Wartsila',model:'W20 Emergency DG',capex:2.2,lead:32,quality:8.8,rec:'preferred',notes:'Proven emergency genset, rapid start <10s.'},
+      {label:'Option B',vendor:'ABB',model:'AMG Emergency Set',capex:2.4,lead:28,quality:9.0,rec:'viable',notes:'Higher reliability metrics; faster delivery.'},
+    ]
+  },
+  'sw-pump': { func:'Seawater Cooling Supply', equip:'Seawater Lift Pump',
+    options:[
+      {label:'Option A',vendor:'Sulzer',model:'ZPP Vertical Turbine',capex:1.8,lead:36,quality:8.5,rec:'preferred',notes:'Vertical turbine pump — standard for FPSO seawater lift.'},
+      {label:'Option B',vendor:'Flowserve',model:'VTP Series',capex:1.6,lead:40,quality:8.2,rec:'viable',notes:'Cost saving option; slightly longer delivery.'},
+    ]
+  },
+  'ccw-cooler': { func:'Closed Cooling Water Heat Rejection', equip:'Closed Cooling Water Cooler',
+    options:[
+      {label:'Option A',vendor:'Alfa Laval',model:'M-Series PHE',capex:2.4,lead:40,quality:9.0,rec:'preferred',notes:'Plate heat exchanger — compact, high thermal efficiency.'},
+      {label:'Option B',vendor:'SWEP',model:'B-Series PHE',capex:2.1,lead:36,quality:8.6,rec:'viable',notes:'Lower cost PHE; same thermal performance class.'},
+    ]
+  },
+  'n2-pkg': { func:'Nitrogen Supply (Blanketing / Purge)', equip:'Nitrogen Generation Package',
+    options:[
+      {label:'Option A',vendor:'Air Products',model:'PRISM Membrane',capex:1.6,lead:32,quality:8.4,rec:'preferred',notes:'Membrane-based N2 — simple, low maintenance.'},
+      {label:'Option B',vendor:'Atlas Copco',model:'NGP PSA',capex:1.8,lead:28,quality:8.8,rec:'viable',notes:'PSA unit — higher purity N2 if required.'},
+    ]
+  },
+  'corr-inh': { func:'Corrosion Inhibitor Dosing', equip:'Corrosion Inhibitor Injection Package',
+    options:[
+      {label:'Option A',vendor:'Frames Process Systems',model:'CI-Skid 4-pump',capex:1.2,lead:32,quality:8.5,rec:'preferred',notes:'Standard 4-pump CI skid with storage tank.'},
+      {label:'Option B',vendor:'Axsia Howmar',model:'ChemInject Pro',capex:1.1,lead:28,quality:8.3,rec:'viable',notes:'Slightly lower cost; competitive spec.'},
+    ]
+  },
+  'meg-pkg': { func:'Hydrate Inhibition — Subsea', equip:'MEG/Methanol Injection Package',
+    options:[
+      {label:'Option A',vendor:'Frames Process Systems',model:'MEG-HiP 300 bar',capex:2.8,lead:40,quality:9.0,rec:'preferred',notes:'HP MEG injection — preferred for deepwater subsea lines.'},
+      {label:'Option B',vendor:'FMC Technologies',model:'MeOH-Inject 300',capex:2.4,lead:44,quality:8.5,rec:'viable',notes:'Methanol alternative — lower CAPEX, higher OPEX.'},
+    ]
+  },
+  'flare-hp': { func:'HP Gas Emergency Combustion', equip:'HP Flare Stack & Tip',
+    options:[
+      {label:'Option A',vendor:'John Zink Hamworthy',model:'LRGO Flare 600',capex:4.8,lead:52,quality:9.1,rec:'preferred',notes:'Low-radiation ground flare option. Best for manned facility.'},
+      {label:'Option B',vendor:'Zeeco',model:'Ultra-Elevated 500',capex:4.2,lead:56,quality:8.7,rec:'viable',notes:'Elevated boom flare — cost-effective but higher radiation.'},
+    ]
+  },
+  'bwts': { func:'Ballast Water Treatment (IMO BWMC)', equip:'Ballast Water Treatment System',
+    options:[
+      {label:'Option A',vendor:'Wartsila',model:'Aquarius UV',capex:3.2,lead:48,quality:8.9,rec:'preferred',notes:'UV-based BWTS — IMO and USCG type approved.'},
+      {label:'Option B',vendor:'Alfa Laval',model:'PureBallast 3 Ex',capex:3.5,lead:44,quality:9.2,rec:'viable',notes:'Electrochlorination — robust, higher approval portfolio.'},
+      {label:'Option C',vendor:'Evoqua',model:'SeaCURE',capex:2.9,lead:52,quality:8.4,rec:'viable',notes:'Electrochlorination variant — lower CAPEX.'},
+    ]
+  },
+  'fw-pump': { func:'Firewater Supply', equip:'Firewater Main Pump',
+    options:[
+      {label:'Option A',vendor:'Flowserve',model:'LNN Fire Pump',capex:2.4,lead:40,quality:9.0,rec:'preferred',notes:'Diesel-driven, FM/UL listed. API 610 compliant.'},
+      {label:'Option B',vendor:'Sulzer',model:'SJD Fire Pump',capex:2.2,lead:44,quality:8.8,rec:'viable',notes:'Competitive alternative; slightly longer lead.'},
+    ]
+  },
+  'fng': { func:'Fire & Gas Detection', equip:'F&G Detection System',
+    options:[
+      {label:'Option A',vendor:'Honeywell',model:'Experion FGS',capex:4.8,lead:48,quality:9.3,rec:'preferred',notes:'Integrated FGS with FSD logic. SIL 2 certified.'},
+      {label:'Option B',vendor:'Emerson',model:'DeltaV SIS F&G',capex:5.1,lead:44,quality:9.5,rec:'viable',notes:'Premium option; highest accuracy and integration.'},
+      {label:'Option C',vendor:'ABB',model:'800xA Safety FGS',capex:4.5,lead:52,quality:9.1,rec:'viable',notes:'Lower CAPEX; strong integration with ABB DCS.'},
+    ]
+  },
+};
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let currentConcept = 0;
+let sortCol = 'tag';
+let sortAsc = true;
+let filteredRows = [];
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+function selectConcept(idx) {
+  currentConcept = idx;
+  [0,1,2].forEach(i => {
+    document.getElementById('c'+i).classList.toggle('active', i===idx);
+  });
+  const names = ['C1 – Spread Moored','C2 – Turret Moored','C3 – CALM Buoy'];
+  document.getElementById('active-concept-tag').textContent = names[idx];
+  closePanel();
+  applyFilters();
+}
+
+function statusPill(s) {
+  const map = {
+    'Confirmed':'pill-confirmed','Under Review':'pill-review',
+    'TBC':'pill-tbc','Concept':'pill-concept'
+  };
+  return `<span class="pill ${map[s]||'pill-concept'}">${s}</span>`;
+}
+
+function classPill(c) {
+  const map = {
+    'Separator':'pill-process','Compressor':'pill-mechanical',
+    'Gas Turbine Generator':'pill-electrical','Generator':'pill-electrical',
+    'Pump':'pill-mechanical','Heat Exchanger':'pill-instrument',
+    'Air Cooler':'pill-instrument','Package':'pill-package',
+    'Vessel':'pill-structural','Metering':'pill-instrument',
+    'Flare':'pill-amber','Filter':'pill-teal','Heater':'pill-amber'
+  };
+  const cls = map[c]||'pill-concept';
+  return `<span class="pill ${cls}">${c}</span>`;
+}
+
+function applyFilters() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const area = document.getElementById('area-filter').value;
+  const status = document.getElementById('status-filter').value;
+  const cls = document.getElementById('class-filter').value;
+  const altsOnly = document.getElementById('alts-only').checked;
+
+  let data = DATASETS[currentConcept];
+  if (search) data = data.filter(r =>
+    r.tag.toLowerCase().includes(search) ||
+    r.name.toLowerCase().includes(search) ||
+    r.service.toLowerCase().includes(search) ||
+    r.cls.toLowerCase().includes(search)
+  );
+  if (area) data = data.filter(r => r.area === area);
+  if (status) data = data.filter(r => r.status === status);
+  if (cls) data = data.filter(r => r.cls === cls);
+  if (altsOnly) data = data.filter(r => r.altsKey && ALTS[r.altsKey]);
+
+  // Sort
+  data = [...data].sort((a,b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (sortCol==='capex'||sortCol==='lead') return sortAsc?(av-bv):(bv-av);
+    av = String(av||'').toLowerCase(); bv = String(bv||'').toLowerCase();
+    return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+
+  filteredRows = data;
+  renderTable(data);
+  updateStats(data);
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('mel-tbody');
+  let html = '';
+  let lastArea = null;
+
+  data.forEach(r => {
+    if (r.area !== lastArea) {
+      lastArea = r.area;
+      const areaName = AREAS[r.area] || r.area;
+      const count = data.filter(x=>x.area===r.area).length;
+      html += `<tr class="area-header"><td colspan="9">▸ ${areaName} &nbsp;·&nbsp; ${count} items</td></tr>`;
+    }
+    const altData = r.altsKey && ALTS[r.altsKey];
+    const altBtn = altData
+      ? `<button class="alt-badge" onclick="showAlts('${r.altsKey}','${r.name.replace(/'/g,"\\'")}')">
+           ⊕ ${altData.options.length} options
+         </button>`
+      : `<span class="no-alt">—</span>`;
+
+    html += `<tr>
+      <td class="tag-no">${r.tag}</td>
+      <td>${classPill(r.cls)}</td>
+      <td><div class="equip-name">${r.name}</div></td>
+      <td class="equip-func">${r.service}</td>
+      <td><span class="pill pill-concept">${r.area}</span></td>
+      <td>${statusPill(r.status)}</td>
+      <td class="capex-cell">${r.capex.toFixed(1)}</td>
+      <td class="lead-cell">${r.lead}</td>
+      <td>${altBtn}</td>
+    </tr>`;
+  });
+
+  if (!html) html = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--t3)">No equipment matches the current filters.</td></tr>`;
+  tbody.innerHTML = html;
+}
+
+function updateStats(data) {
+  const total = data.length;
+  const capex = data.reduce((s,r)=>s+r.capex,0);
+  const review = data.filter(r=>r.status==='Under Review').length;
+  const tbc = data.filter(r=>r.status==='TBC').length;
+  const alts = data.filter(r=>r.altsKey&&ALTS[r.altsKey]).length;
+  const leads = data.map(r=>r.lead);
+  const avgLead = leads.length ? Math.round(leads.reduce((a,b)=>a+b,0)/leads.length) : 0;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-capex').textContent = capex.toFixed(0);
+  document.getElementById('stat-review').textContent = review;
+  document.getElementById('stat-tbc').textContent = tbc;
+  document.getElementById('stat-alts').textContent = alts;
+  document.getElementById('stat-lead').textContent = avgLead;
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
+  document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+  const th = document.getElementById('th-'+col);
+  if (th) {
+    th.classList.add('sorted');
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = sortAsc ? '↑' : '↓';
+  }
+  applyFilters();
+}
+
+// ─── ALTERNATIVES PANEL ─────────────────────────────────────────────────────
+function showAlts(key, equipName) {
+  const alts = ALTS[key];
+  if (!alts) return;
+  document.getElementById('alt-title').textContent = 'Alternatives — ' + alts.func;
+  document.getElementById('alt-subtitle').textContent = equipName;
+
+  const colors = ['#185FA5','#2E7D32','#BA7517','#534AB7'];
+  let html = '';
+
+  alts.options.forEach((opt, i) => {
+    const recCls = opt.rec==='preferred'?'preferred':opt.rec==='viable'?'viable':'not-rec';
+    const recLabel = opt.rec==='preferred'?'Preferred':opt.rec==='viable'?'Viable':'Not Recommended';
+    const capexMin = Math.min(...alts.options.map(o=>o.capex));
+    const capexMax = Math.max(...alts.options.map(o=>o.capex));
+    const leadMin = Math.min(...alts.options.map(o=>o.lead));
+    const leadMax = Math.max(...alts.options.map(o=>o.lead));
+    const capexCls = opt.capex===capexMin?'capex-low':opt.capex===capexMax?'capex-high':'capex-mid';
+    const leadCls = opt.lead===leadMin?'capex-low':opt.lead===leadMax?'capex-high':'capex-mid';
+    const qualCls = opt.quality>=9.0?'capex-low':opt.quality>=8.5?'capex-mid':'capex-high';
+
+    // Radar chart SVG
+    const costScore = 1 - (opt.capex - capexMin) / (capexMax - capexMin + 0.001);
+    const schedScore = 1 - (opt.lead - leadMin) / (leadMax - leadMin + 0.001);
+    const qualScore = (opt.quality - 7) / 3;
+    const radar = buildRadar([costScore, schedScore, qualScore], colors[i]);
+
+    html += `<div class="alt-option">
+      <div class="alt-opt-header">
+        <span class="alt-opt-label">${opt.label}</span>
+        <span class="alt-opt-vendor">${opt.vendor} · ${opt.model}</span>
+        <span class="spacer"></span>
+        <span class="pill alt-opt-rec ${recCls}">${recLabel}</span>
+      </div>
+      <div class="radar-wrap">${radar}</div>
+      <div class="alt-metrics">
+        <div class="alt-metric">
+          <div class="alt-metric-val ${capexCls}">${opt.capex.toFixed(1)}</div>
+          <div class="alt-metric-lbl">CAPEX MUSD</div>
+        </div>
+        <div class="alt-metric">
+          <div class="alt-metric-val ${leadCls}">${opt.lead} wks</div>
+          <div class="alt-metric-lbl">Lead Time</div>
+        </div>
+        <div class="alt-metric">
+          <div class="alt-metric-val ${qualCls}">${opt.quality}/10</div>
+          <div class="alt-metric-lbl">Quality</div>
+        </div>
+      </div>
+      <div class="alt-note">${opt.notes}</div>
+    </div>`;
+  });
+
+  document.getElementById('alt-body').innerHTML = html;
+  document.getElementById('alt-panel').classList.add('open');
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function buildRadar(scores, color) {
+  // scores: [cost, schedule, quality] 0..1
+  const cx=80,cy=70,r=50;
+  const labels=['Cost Eff.','Schedule','Quality'];
+  const angles = [-Math.PI/2, -Math.PI/2 + 2*Math.PI/3, -Math.PI/2 + 4*Math.PI/3];
+
+  // Grid circles
+  let svg = `<svg width="160" height="140" viewBox="0 0 160 140">`;
+  [0.25,0.5,0.75,1.0].forEach(t => {
+    const pts = angles.map(a=>`${cx+r*t*Math.cos(a)},${cy+r*t*Math.sin(a)}`).join(' ');
+    svg += `<polygon points="${pts}" fill="none" stroke="var(--b3)" stroke-width="0.5"/>`;
+  });
+  // Axes
+  angles.forEach(a => {
+    svg += `<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="var(--b3)" stroke-width="0.5"/>`;
+  });
+  // Data polygon
+  const pts = angles.map((a,i) => {
+    const s = scores[i];
+    return `${cx+r*s*Math.cos(a)},${cy+r*s*Math.sin(a)}`;
+  }).join(' ');
+  svg += `<polygon points="${pts}" fill="${color}" fill-opacity="0.25" stroke="${color}" stroke-width="1.5"/>`;
+  // Dots
+  angles.forEach((a,i) => {
+    const s = scores[i];
+    svg += `<circle cx="${cx+r*s*Math.cos(a)}" cy="${cy+r*s*Math.sin(a)}" r="3" fill="${color}"/>`;
+  });
+  // Labels
+  angles.forEach((a,i) => {
+    const lx = cx+(r+14)*Math.cos(a);
+    const ly = cy+(r+14)*Math.sin(a);
+    svg += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="var(--t3)">${labels[i]}</text>`;
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+function closePanel() {
+  document.getElementById('alt-panel').classList.remove('open');
+  document.getElementById('overlay').style.display = 'none';
+}
+
+// ─── EXPORT CSV ─────────────────────────────────────────────────────────────
+function exportCSV() {
+  const data = filteredRows;
+  const header = ['Tag No.','CFIHOS Class','Equipment','Service','Area','Status','CAPEX MUSD','Lead Weeks','Has Alternatives'];
+  const rows = data.map(r => [
+    r.tag,r.cls,r.name,r.service,AREAS[r.area]||r.area,r.status,
+    r.capex.toFixed(1),r.lead,
+    (r.altsKey&&ALTS[r.altsKey])?'Yes':'No'
+  ]);
+  const csv = [header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const cName = ['C1-SpreadMoored','C2-TurretMoored','C3-CALM'][currentConcept];
+  a.download = `JEDI-FPSO-MEL-${cName}.csv`;
+  a.click();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+applyFilters();
+</script>
+</body>
+</html>
